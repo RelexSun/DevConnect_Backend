@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS skills (
 
 CREATE TABLE IF NOT EXISTS developer_profiles (
     developer_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    bio VARCHAR(500),
+    bio VARCHAR(100),
     address VARCHAR(200),
     cover_picture VARCHAR(255),
     cv VARCHAR(255),
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS topics (
 -- comments
 CREATE TABLE IF NOT EXISTS comments (
     comment_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    text TEXT NOT NULL ,
+    text VARCHAR NOT NULL ,
     total_upvotes INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     edited_at TIMESTAMP,
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS resumes (
     email VARCHAR(100) NOT NULL ,
     dob DATE NOT NULL ,
     position VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     information JSONB NOT NULL ,
     user_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS resumes (
 -- join_job
 CREATE TABLE IF NOT EXISTS join_jobs (
     title VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     is_approve BOOLEAN DEFAULT FALSE,
     job_id UUID NOT NULL,
     user_id UUID NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS join_jobs (
 CREATE TABLE IF NOT EXISTS code_challenges (
     challenge_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     test_case JSONB NOT NULL ,
     problem_detail VARCHAR NOT NULL ,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS join_hackathons (
 
 -- hackathon_certificate
 CREATE TABLE IF NOT EXISTS hackathon_certificate (
-     description TEXT NOT NULL ,
+     description VARCHAR NOT NULL ,
      issued_date TIMESTAMP NOT NULL ,
      hackathon_id UUID NOT NULL,
      user_id UUID NOT NULL,
@@ -252,7 +252,7 @@ CREATE TABLE IF NOT EXISTS project_positions (
 -- join_project
 CREATE TABLE IF NOT EXISTS join_projects (
     title VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     is_approved BOOLEAN DEFAULT FALSE,
     project_id UUID NOT NULL ,
     user_id UUID NOT NULL,
