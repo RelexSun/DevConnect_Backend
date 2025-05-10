@@ -2,6 +2,7 @@ package com.kshrd.devconnect_springboot.respository;
 
 import com.kshrd.devconnect_springboot.config.UuidTypeHandler;
 import com.kshrd.devconnect_springboot.model.entity.Position;
+import com.kshrd.devconnect_springboot.model.entity.ProjectPosition;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 
@@ -10,17 +11,18 @@ import java.util.UUID;
 
 @Mapper
 public interface ProjectPositionRepository {
+    @Result(property = "maxMembers", column = "max_members")
     @Result(property = "positionId", column = "position_id")
     @Result(property = "positionName", column = "position_name")
     @Select("""
         SELECT * FROM project_positions pp INNER JOIN positions p ON p.position_id = pp.position_id WHERE project_id = #{projectId}
     """)
-    List<Position> getAllProjectPositionById(UUID projectId);
+    List<ProjectPosition> getAllProjectPositionById(UUID projectId);
 
     @Insert("""
-        INSERT INTO project_positions VALUES (#{projectId}, #{positionId})
+        INSERT INTO project_positions VALUES (#{maxMembers}, #{projectId}, #{positionId})
     """)
-    void createProjectPosition(UUID projectId, UUID positionId);
+    void createProjectPosition(Integer maxMembers, UUID projectId, UUID positionId);
 
     @Delete("""
         DELETE FROM project_positions WHERE project_id = #{projectId}

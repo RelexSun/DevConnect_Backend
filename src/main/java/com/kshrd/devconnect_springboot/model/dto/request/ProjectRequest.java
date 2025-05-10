@@ -25,19 +25,15 @@ public class ProjectRequest {
     private String description;
 
     @NotNull
-    @Positive
-    private Integer maxMember;
+    private Boolean isOpen;
 
     @NotNull
     @FutureOrPresent
     private LocalDate createdAt;
 
     @NotNull
-    private List<UUID> positions;
+    private List<ProjectPositionRequest> positions;
 
     @NotNull
     private List<UUID> skills;
-
-    @NotNull
-    private UUID ownerId;
 }

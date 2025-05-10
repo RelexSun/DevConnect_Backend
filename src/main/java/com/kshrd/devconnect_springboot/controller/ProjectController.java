@@ -2,12 +2,11 @@ package com.kshrd.devconnect_springboot.controller;
 
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
-import com.kshrd.devconnect_springboot.model.dto.request.JoinProjectRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
+import com.kshrd.devconnect_springboot.model.entity.JoinProject;
 import com.kshrd.devconnect_springboot.service.ProjectService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,8 @@ public class ProjectController extends BaseController {
     private final ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllProjects( @RequestParam(defaultValue = "1") @Positive Integer page,
-                                                       @RequestParam(defaultValue = "10") @Positive Integer size) {
+    public ResponseEntity<ApiResponse> getAllProjects( @RequestParam(defaultValue = "1") Integer page,
+                                                       @RequestParam(defaultValue = "10") Integer size) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("Get project by id successfully")
@@ -35,7 +34,7 @@ public class ProjectController extends BaseController {
     }
 
     @GetMapping("/{project-id}")
-    public ResponseEntity<ApiResponse> getProjectById(@PathVariable("project-id") @Positive UUID projectId) {
+    public ResponseEntity<ApiResponse> getProjectById(@PathVariable("project-id") UUID projectId) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("Get project by id successfully")
@@ -45,8 +44,8 @@ public class ProjectController extends BaseController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<ApiResponse> getAllProjectByUser(@RequestParam(defaultValue = "1") @Positive Integer page,
-                                                           @RequestParam(defaultValue = "10") @Positive Integer size) {
+    public ResponseEntity<ApiResponse> getAllProjectByUser(@RequestParam(defaultValue = "1") Integer page,
+                                                           @RequestParam(defaultValue = "10") Integer size) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("Get project by id successfully")
@@ -55,8 +54,8 @@ public class ProjectController extends BaseController {
                 .build());
     }
 
-    @GetMapping("/{project-id}/users")
-    public ResponseEntity<ApiResponse> getProjectByIdAndUser(@PathVariable("project-id") @Positive UUID projectId) {
+    @GetMapping("/users/{project-id}")
+    public ResponseEntity<ApiResponse> getProjectByIdAndUser(@PathVariable("project-id") UUID projectId) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("Get project by id successfully")
@@ -76,7 +75,7 @@ public class ProjectController extends BaseController {
     }
 
     @PutMapping("/{project-id}")
-    public ResponseEntity<ApiResponse> updateProjectById(@PathVariable("project-id") @Positive UUID projectId,
+    public ResponseEntity<ApiResponse> updateProjectById(@PathVariable("project-id") UUID projectId,
                                                          @Valid @RequestBody ProjectRequest projectRequest) {
         return response(ApiResponse.builder()
                 .success(true)
@@ -86,15 +85,25 @@ public class ProjectController extends BaseController {
                 .build());
     }
 
+    @DeleteMapping("/{project-id}")
+    public ResponseEntity<ApiResponse> deleteProjectByIdAndUser(@PathVariable("project-id") UUID projectId) {
+        projectService.deleteProject(projectId);
+        return response(ApiResponse.builder()
+                .success(true)
+                .message("Deleted project successfully")
+                .status(HttpStatus.OK)
+                .build());
+    }
+
     // patch endpoint for recruiter to update is open status
 
     @PostMapping("/join")
-    public ResponseEntity<ApiResponse> createJoinProject(@RequestBody JoinProjectRequest joinProjectRequest) {
+    public ResponseEntity<ApiResponse> createJoinProject(@RequestBody JoinProject joinProjectRequest) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("Update project successfully")
                 .status(HttpStatus.OK)
-//                .payload(projectService.createProject(joinProjectRequest))
+                .payload(projectService.createJoinProject(joinProjectRequest))
                 .build());
 
     }

@@ -1,6 +1,7 @@
 package com.kshrd.devconnect_springboot.service;
 
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
+import com.kshrd.devconnect_springboot.model.entity.JoinProject;
 import com.kshrd.devconnect_springboot.model.entity.Project;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface ProjectService {
     Project getProjectByIdAndUser(UUID projectId);
     Project createProject(ProjectRequest projectRequest);
     Project updateProject(UUID projectId, ProjectRequest projectRequest);
+    void deleteProject(UUID projectId);
+    JoinProject createJoinProject(JoinProject joinProject);
 }

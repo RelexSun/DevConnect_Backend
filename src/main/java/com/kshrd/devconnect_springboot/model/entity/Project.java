@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -17,5 +18,7 @@ public class Project {
     private String description;
     private Boolean isOpen;
     private LocalDate createdAt;
-    private AppUserResponse ownerId;
+    private AppUserResponse userId;
+    private List<Skill> skills;
+    private List<ProjectPosition> positions;
 }

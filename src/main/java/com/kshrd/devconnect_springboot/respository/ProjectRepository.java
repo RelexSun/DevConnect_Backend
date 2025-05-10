@@ -14,7 +14,7 @@ public interface ProjectRepository {
             @Result(property = "projectId", column = "project_id"),
             @Result(property = "isOpen", column = "is_open"),
             @Result(property = "createdAt", column = "created_at"),
-            @Result(property = "ownerId", column = "owner_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
+            @Result(property = "userId", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
             @Result(property = "skills", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectSkillRepository.getSkillByProjectId")),
             @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById"))
     })
@@ -32,23 +32,23 @@ public interface ProjectRepository {
 
     @ResultMap("projectMapper")
     @Select("""
-        SELECT * FROM projects WHERE owner_id = #{ownerId}
+        SELECT * FROM projects WHERE user_id = #{userId}
         OFFSET #{page} LIMIT #{size};
     """)
-    List<Project> getAllProjectByUser(UUID ownerId, Integer page, Integer size);
+    List<Project> getAllProjectByUser(UUID userId, Integer page, Integer size);
 
     @ResultMap("projectMapper")
     @Select("""
-        SELECT * FROM projects WHERE owner_id = #{ownerId} AND project_id = #{projectId}
+        SELECT * FROM projects WHERE user_id = #{userId} AND project_id = #{projectId}
     """)
-    Project getProjectByIdAndUser(UUID ownerId, UUID projectId);
+    Project getProjectByIdAndUser(UUID userId, UUID projectId);
 
     @ResultMap("projectMapper")
     @Select("""
-        INSERT INTO projects VALUES (DEFAULT, #{req.title}, #{req.description}, #{req.isOpen}, DEFAULT, #{ownerId})
+        INSERT INTO projects VALUES (DEFAULT, #{req.title}, #{req.description}, #{req.isOpen}, DEFAULT, #{userId})
         RETURNING *;
     """)
-    Project createProjectByUser(UUID ownerId, @Param("req") ProjectRequest request);
+    Project createProjectByUser(UUID userId, @Param("req") ProjectRequest request);
 
     @ResultMap("projectMapper")
     @Select("""
@@ -58,7 +58,7 @@ public interface ProjectRepository {
     Project updateProject(UUID projectId, @Param("req") ProjectRequest request);
 
     @Delete("""
-        DELETE FROM projects WHERE project_id = #{projectId}
+        DELETE FROM projects WHERE project_id = #{projectId} AND user_id = #{userId}
     """)
-    void deleteProject(UUID projectId);
+    void deleteProject(UUID userId, UUID projectId);
 }
