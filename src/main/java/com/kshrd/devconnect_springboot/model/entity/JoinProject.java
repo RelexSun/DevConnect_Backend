@@ -13,6 +13,7 @@ import java.util.UUID;
 public class JoinProject {
     private String title;
     private String description;
+    private Boolean isApproved;
     private UUID projectId;
     private List<UUID> positionId;
     private List<UUID> developerId;

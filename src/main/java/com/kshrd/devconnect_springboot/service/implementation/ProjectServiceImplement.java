@@ -26,6 +26,7 @@ public class ProjectServiceImplement implements ProjectService {
     private final ProjectSkillRepository projectSkillRepository;
     private final PositionRepository positionRepository;
     private final SkillRepository skillRepository;
+    private final JoinProjectRepository joinProjectRepository;
 
     @Override
     public List<Project> getAllProject(Integer page, Integer size) {
@@ -109,6 +110,26 @@ public class ProjectServiceImplement implements ProjectService {
 
     @Override
     public JoinProject createJoinProject(JoinProject joinProject) {
-        return null;
+        Project project = projectRepository.getProjectById(joinProject.getProjectId());
+        if(project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        for (UUID p : joinProject.getPositionId()) {
+            if (positionRepository.getPositionById(p) == null) throw new NotFoundException("Position not found");
+        }
+        for (UUID p : joinProject.getPositionId()) {
+            if(projectPositionRepository.getPositionByProject(project.getProjectId(), p) == null) throw new NotFoundException("Position don't exist in the project");
+        }
+        return joinProjectRepository.createJoinProject(joinProject);
     }
+
+    @Override
+    public List<ProjectPosition> getAllPositionByProjectId(UUID projectId) {
+        Project project = projectRepository.getProjectById(projectId);
+        if(project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        return projectPositionRepository.getAllPositionByProjectId(projectId);
+    }
+
 }
