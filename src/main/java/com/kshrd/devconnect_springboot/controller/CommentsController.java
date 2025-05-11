@@ -24,12 +24,13 @@ public class CommentsController extends BaseController {
     private final CommentService commentsService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse>  getAllComments() {
+    public ResponseEntity<ApiResponse>  getAllComments(@RequestParam(defaultValue = "1") Integer page,
+                                                       @RequestParam(defaultValue = "10") Integer size) {
        return response(ApiResponse.builder()
                .success(true)
                 .message("Comments retrieved successfully")
                 .status(HttpStatus.OK)
-                .payload(commentsService.getAllComments())
+                .payload(commentsService.getAllComments(page, size))
                .build());
     }
 

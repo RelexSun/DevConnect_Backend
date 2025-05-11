@@ -1,6 +1,6 @@
 package com.kshrd.devconnect_springboot.respository;
 
-import com.kshrd.devconnect_springboot.config.ResumeInformationTypeHandler;
+import com.kshrd.devconnect_springboot.config.JobBoardTypeHandler;
 import com.kshrd.devconnect_springboot.model.dto.request.ResumeRequest;
 import com.kshrd.devconnect_springboot.model.entity.Resume;
 import org.apache.ibatis.annotations.*;
@@ -26,7 +26,7 @@ public interface ResumeRepository {
             @Result(property = "dob", column = "dob"),
             @Result(property = "position", column = "position"),
             @Result(property = "description", column = "description"),
-            @Result(property = "information", column = "information" , typeHandler = ResumeInformationTypeHandler.class),
+            @Result(property = "information", column = "information" , typeHandler = JobBoardTypeHandler.class),
             @Result(property = "developerId", column = "developer_id")
     })
     Resume selectResumesById(@Param("id") UUID id);

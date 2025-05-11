@@ -3,6 +3,7 @@ package com.kshrd.devconnect_springboot.controller;
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.service.UpvoteService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/upvote")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class UpvoteController extends BaseController {
 

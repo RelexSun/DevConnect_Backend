@@ -5,6 +5,7 @@ import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
 import com.kshrd.devconnect_springboot.model.entity.Topic;
 import com.kshrd.devconnect_springboot.respository.TopicRepository;
 import com.kshrd.devconnect_springboot.service.TopicService;
+import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.UUID;
 @Service
 public class TopicServiceImplementation implements TopicService {
     private final TopicRepository repository;
-    UUID currentUserId = UUID.fromString("e9582541-12d7-4f2f-b921-af1ea9c09795");
     public TopicServiceImplementation(TopicRepository repository) {
         this.repository = repository;
     }
@@ -30,12 +30,12 @@ public class TopicServiceImplementation implements TopicService {
 
     @Override
     public Topic createTopics(TopicRequest entity) {
-        return repository.insertTopics(entity , currentUserId);
+        return repository.insertTopics(entity , CurrentUser.appUserId);
     }
 
     @Override
     public Topic updateTopics(UUID id, TopicRequest entity) {
-        return repository.updateTopics(id, entity , currentUserId);
+        return repository.updateTopics(id, entity , CurrentUser.appUserId);
     }
     @Override
     public Topic deleteTopics(UUID id) {

@@ -6,6 +6,7 @@ import com.kshrd.devconnect_springboot.model.dto.request.CodeChallengeRequest;
 import com.kshrd.devconnect_springboot.model.entity.CodeChallenge;
 import com.kshrd.devconnect_springboot.respository.CodeChallengeRepository;
 import com.kshrd.devconnect_springboot.service.CodeChallengeService;
+import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Service
 public class CodeChallengeServiceImpl implements CodeChallengeService {
     private final CodeChallengeRepository repository;
-    UUID currentUser = UUID.fromString("74594d8f-ffaa-48e2-89fc-5e88a41fe897"); // edit here when have auth
+
     public CodeChallengeServiceImpl(CodeChallengeRepository repository) {
         this.repository = repository;
     }
@@ -31,7 +32,7 @@ public class CodeChallengeServiceImpl implements CodeChallengeService {
     @Override
     public CodeChallenge createCodeChallenge(CodeChallengeRequest entity) {
 
-        return repository.insertCodeChallenge(entity , currentUser);
+        return repository.insertCodeChallenge(entity , CurrentUser.appUserId);
     }
 
     @Override

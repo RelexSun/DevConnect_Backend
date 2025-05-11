@@ -12,30 +12,19 @@ public interface TopicRepository {
  
     // GET Topic BY ID
     @Select("""
-        SELECT 
-            t.topic_id,
-            t.content AS topic_content,
-            t.created_at AS topic_posted_at,
-            t.creator_id AS topic_creator_id,
-            c.comment_id,
-            c.text AS comment_content,
-            c.created_at AS comment_posted_at,
-            c.total_upvotes,
-            c.user_id AS comment_creator_id
-        FROM topics t
-        LEFT JOIN comments c ON t.topic_id = c.topic_id
-        WHERE t.topic_id = #{topicId}
-""")
+        SELECT * FROM topics
+        WHERE topic_id = #{topicId}
+    """)
     @Results(id = "BaseResultMap", value = {
             @Result(property = "topicId", column = "topic_id"),
             @Result(property = "content", column = "content"),
-            @Result(property = "postedAt", column = "posted_at"),
-            @Result(property = "creator", column = "creator_id" ,
+            @Result(property = "postedAt", column = "created_at"),
+            @Result(property = "creator", column = "user_id" ,
                     one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
             @Result(property = "comments", column = "topic_id",
                     many = @Many(select = "com.kshrd.devconnect_springboot.respository.CommentRepository.selectCommentsByTopicId"))
     })
-    Topic selectTopicsById(@Param("id") UUID id);
+    Topic selectTopicsById(UUID topicId);
     
     // DELETE Topic
     @Select("""
@@ -50,7 +39,7 @@ public interface TopicRepository {
     // INSERT Topic
     @Select("""
         INSERT INTO topics
-        (content, created_at, creator_id)
+        (content, created_at, user_id)
         VALUES
         (
             #{topics.content},
@@ -69,7 +58,7 @@ public interface TopicRepository {
     SET
          content = #{topics.content},
          created_at = #{topics.postedAt},
-         creator_id = #{creatorId}
+         user_id = #{creatorId}
     WHERE topic_id = #{id}
     RETURNING *;
     """)

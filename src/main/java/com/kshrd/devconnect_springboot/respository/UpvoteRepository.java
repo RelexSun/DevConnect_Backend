@@ -12,7 +12,7 @@ public interface UpvoteRepository {
     @Select("""
         DELETE
         FROM upvote
-        WHERE comment_id =  #{upvote.commentId} AND user_id = #{upvote.userId}
+        WHERE comment_id = #{upvote.commentId} AND user_id = #{upvote.userId}
         RETURNING *
         """)
         @Results(id = "BaseResultMap", value = {
@@ -21,7 +21,7 @@ public interface UpvoteRepository {
         })
     Upvote deleteUpvote(@Param("upvote") Upvote entity);
 
-    // INSERT Upvotes
+    // INSERT Upvote
     @Select("""
         INSERT INTO upvote
         (comment_id, user_id)

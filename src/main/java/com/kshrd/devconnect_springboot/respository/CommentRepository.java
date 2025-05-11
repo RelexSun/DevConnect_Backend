@@ -81,9 +81,12 @@ public interface CommentRepository {
         
     @Select("""
         SELECT * FROM comments
+            offset #{limit} * (#{offset} - 1)
+            limit #{limit}
+    
     """)
     @ResultMap("BaseResultMap")
-    List<Comment> getAllComments();
+    List<Comment> getAllComments(Integer limit , Integer offset);
 
     // INSERT REPLY Comment
 

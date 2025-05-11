@@ -10,6 +10,7 @@ import com.kshrd.devconnect_springboot.respository.SubmissionRepository;
 import com.kshrd.devconnect_springboot.service.CodeChallengeService;
 import com.kshrd.devconnect_springboot.service.SubmissionService;
 import com.kshrd.devconnect_springboot.utils.CodeGenerator;
+import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import com.kshrd.devconnect_springboot.utils.VersionLanguage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -27,12 +28,12 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class SubmissionServiceImpl implements SubmissionService {
+
     private final CodeChallengeService codingChallengeRepository;
     private final SubmissionRepository submissionRepository;
-//    private final StudentAnswerServiceImpl studentAnswerService;
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String PISTON_URL = "https://emkc.org/api/v2/piston/execute";
-    UUID currentUser = UUID.fromString("e9582541-12d7-4f2f-b921-af1ea9c09795");
+
 
     public Submission getSubmissionByDevId(UUID id) {
         return submissionRepository.selectSubmissionById(id);
@@ -45,7 +46,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public void createSubmission(UUID challengeId, Long timeSubmitted , Integer score) {
         SubmissionRequest entity = new SubmissionRequest();
         entity.setChallengeId(challengeId);
-        entity.setDeveloperId(currentUser);
+        entity.setDeveloperId(CurrentUser.appUserId);
         entity.setSubmitTime(timeSubmitted);
         entity.setSubmittedAt(LocalDateTime.now());
         entity.setScore(score);

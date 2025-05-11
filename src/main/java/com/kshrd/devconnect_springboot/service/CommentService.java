@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface CommentService {
     Comment getCommentsById(UUID id);
-    List<Comment> getAllComments();
+    List<Comment> getAllComments(Integer page, Integer size);
     Comment createComments(CommentRequest entity , UUID topicId);
     Comment updateComments (UUID id, CommentRequest entity);
     Comment deleteComments(UUID id);
