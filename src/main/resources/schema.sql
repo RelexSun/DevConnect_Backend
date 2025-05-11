@@ -1,5 +1,4 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 CREATE TABLE IF NOT EXISTS app_users (
     user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4() ,
     first_name  VARCHAR(50) NOT NULL,
@@ -26,10 +25,11 @@ CREATE TABLE IF NOT EXISTS skills (
 
 CREATE TABLE IF NOT EXISTS developer_profiles (
     developer_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    bio VARCHAR(500),
+    bio VARCHAR(100),
+    gender VARCHAR(10),
     address VARCHAR(200),
     cover_picture VARCHAR(255),
-    cv VARCHAR(255),
+    cv VARCHAR,
     github_username VARCHAR(100),
     top_comment INTEGER DEFAULT 0,
     mvp_count INTEGER DEFAULT 0,
@@ -45,9 +45,10 @@ CREATE TABLE IF NOT EXISTS developer_profiles (
 CREATE TABLE IF NOT EXISTS recruiter_profiles (
     recruiter_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     company_name VARCHAR(100),
+    gender VARCHAR(10),
     industry VARCHAR(100),
     company_location VARCHAR(200),
-    bio VARCHAR,
+    bio VARCHAR(100),
     establish_date TIMESTAMP,
     cover_picture VARCHAR(255),
     user_id UUID NOT NULL ,
@@ -63,6 +64,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     status BOOLEAN DEFAULT FALSE,
     description VARCHAR(100),
     job_board JSONB NOT NULL,
+    pax INTEGER DEFAULT 0,
     posted_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     creator_id UUID REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
@@ -115,13 +117,16 @@ CREATE TABLE IF NOT EXISTS topics (
 -- comments
 CREATE TABLE IF NOT EXISTS comments (
     comment_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    text TEXT NOT NULL ,
+    text VARCHAR NOT NULL ,
     total_upvotes INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     edited_at TIMESTAMP,
-    topic_id UUID REFERENCES topics(topic_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    parent_id UUID REFERENCES comments(comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    user_id UUID REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+    topic_id UUID NOT NULL ,
+    parent_id UUID NOT NULL,
+    user_id UUID NOT NULL ,
+    FOREIGN KEY (topic_id) REFERENCES topics(topic_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
 
@@ -138,12 +143,13 @@ CREATE TABLE IF NOT EXISTS upvote (
 CREATE TABLE IF NOT EXISTS resumes (
     resume_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     fullname VARCHAR(100) NOT NULL ,
+    gender VARCHAR(10),
     phone_number VARCHAR(20) NOT NULL ,
     address VARCHAR(200) NOT NULL ,
     email VARCHAR(100) NOT NULL ,
     dob DATE NOT NULL ,
     position VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     information JSONB NOT NULL ,
     user_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -152,7 +158,7 @@ CREATE TABLE IF NOT EXISTS resumes (
 -- join_job
 CREATE TABLE IF NOT EXISTS join_jobs (
     title VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     is_approve BOOLEAN DEFAULT FALSE,
     job_id UUID NOT NULL,
     user_id UUID NOT NULL,
@@ -165,9 +171,12 @@ CREATE TABLE IF NOT EXISTS join_jobs (
 CREATE TABLE IF NOT EXISTS code_challenges (
     challenge_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
+    instruction VARCHAR NOT NULL,
     test_case JSONB NOT NULL ,
     problem_detail VARCHAR NOT NULL ,
+    language VARCHAR(30) NOT NULL,
+    starter_code VARCHAR NOT NULL ,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     score INTEGER DEFAULT 0,
     user_id UUID NOT NULL,
@@ -190,7 +199,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 CREATE TABLE IF NOT EXISTS hackathons (
     hackathon_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(100) NOT NULL ,
-    description VARCHAR(1000) NOT NULL ,
+    description VARCHAR NOT NULL ,
     start_at TIMESTAMP,
     finished_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -213,7 +222,7 @@ CREATE TABLE IF NOT EXISTS join_hackathons (
 
 -- hackathon_certificate
 CREATE TABLE IF NOT EXISTS hackathon_certificate (
-     description TEXT NOT NULL ,
+     description VARCHAR NOT NULL ,
      issued_date TIMESTAMP NOT NULL ,
      hackathon_id UUID NOT NULL,
      user_id UUID NOT NULL,
@@ -243,19 +252,21 @@ CREATE TABLE IF NOT EXISTS positions (
 CREATE TABLE IF NOT EXISTS project_positions (
     max_members INTEGER DEFAULT 0,
     project_id UUID NOT NULL,
-    positions_id UUID NOT NULL,
+    position_id UUID NOT NULL,
     FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (positions_id) REFERENCES positions(position_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (project_id, positions_id)
+    FOREIGN KEY (position_id) REFERENCES positions(position_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (project_id, position_id)
     );
 
 -- join_project
 CREATE TABLE IF NOT EXISTS join_projects (
     title VARCHAR(100) NOT NULL ,
-    description TEXT NOT NULL ,
+    description VARCHAR NOT NULL ,
     is_approved BOOLEAN DEFAULT FALSE,
     project_id UUID NOT NULL ,
     user_id UUID NOT NULL,
+    position_id UUID NOT NULL,
+    FOREIGN KEY (position_id) REFERENCES positions(position_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (project_id, user_id)
