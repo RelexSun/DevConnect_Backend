@@ -265,6 +265,8 @@ CREATE TABLE IF NOT EXISTS join_projects (
     is_approved BOOLEAN DEFAULT FALSE,
     project_id UUID NOT NULL ,
     user_id UUID NOT NULL,
+    position_id UUID NOT NULL,
+    FOREIGN KEY (position_id) REFERENCES positions(position_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (project_id, user_id)

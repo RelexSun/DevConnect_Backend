@@ -1,10 +1,8 @@
 package com.kshrd.devconnect_springboot.respository;
-import com.kshrd.devconnect_springboot.config.UuidTypeHandler;
+
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
 import com.kshrd.devconnect_springboot.model.entity.Project;
 import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.type.JdbcType;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -14,9 +12,12 @@ public interface ProjectRepository {
             @Result(property = "projectId", column = "project_id"),
             @Result(property = "isOpen", column = "is_open"),
             @Result(property = "createdAt", column = "created_at"),
-            @Result(property = "userId", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
+            @Result(property = "owner", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
             @Result(property = "skills", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectSkillRepository.getSkillByProjectId")),
-            @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById"))
+            @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById")),
+            @Result(property = "joinProjects", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectId")),
+            @Result(property = "requestToJoin", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectIdAndDeny")),
+            @Result(property = "approved", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectIdAndApproved"))
     })
     @Select("""
         SELECT * FROM projects
@@ -28,7 +29,7 @@ public interface ProjectRepository {
     @Select("""
         SELECT * FROM projects WHERE project_id = #{projectId}
     """)
-    Project getProjectById(UUID projectId);
+    Project getProjectById( UUID projectId);
 
     @ResultMap("projectMapper")
     @Select("""
@@ -61,4 +62,14 @@ public interface ProjectRepository {
         DELETE FROM projects WHERE project_id = #{projectId} AND user_id = #{userId}
     """)
     void deleteProject(UUID userId, UUID projectId);
+
+    @Update("""
+        UPDATE projects SET is_open = false WHERE project_id = #{projectId}
+    """)
+    void updateProjectStatusClose(UUID projectId);
+
+    @Update("""
+        UPDATE projects SET is_open = true WHERE project_id = #{projectId}
+    """)
+    void updateProjectStatusOpen(UUID projectId);
 }

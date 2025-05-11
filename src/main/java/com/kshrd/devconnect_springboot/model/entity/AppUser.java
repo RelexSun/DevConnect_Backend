@@ -22,7 +22,7 @@ public class AppUser implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-//    private String profileImageUrl;
+    private String profileImageUrl;
     private Boolean isRecruiter;
     private Boolean isVerified;
     private LocalDateTime createdAt;

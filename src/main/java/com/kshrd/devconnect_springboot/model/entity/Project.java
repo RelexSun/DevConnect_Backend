@@ -18,7 +18,10 @@ public class Project {
     private String description;
     private Boolean isOpen;
     private LocalDate createdAt;
-    private AppUserResponse userId;
+    private AppUserResponse owner;
     private List<Skill> skills;
     private List<ProjectPosition> positions;
+    private List<JoinProject> joinProjects;
+    private List<JoinProject> requestToJoin;
+    private List<JoinProject> approved;
 }

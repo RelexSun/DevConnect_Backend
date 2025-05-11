@@ -2,6 +2,7 @@ package com.kshrd.devconnect_springboot.controller;
 
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
+import com.kshrd.devconnect_springboot.model.dto.request.JoinProjectRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
 import com.kshrd.devconnect_springboot.model.entity.JoinProject;
 import com.kshrd.devconnect_springboot.service.ProjectService;
@@ -103,25 +104,53 @@ public class ProjectController extends BaseController {
                 .build());
     }
 
-    // patch endpoint for recruiter to update is open status
-    @PatchMapping("/update-status")
-    @Operation(summary = "Update project status")
-    public ResponseEntity<ApiResponse> updateStatus() {
-        return null;
+    @PatchMapping("/update-status-close/{project-id}")
+    @Operation(summary = "Update project status to close")
+    public ResponseEntity<ApiResponse> updateStatusClose(@PathVariable("project-id") UUID projectId) {
+        projectService.updateProjectStatusClose(projectId);
+        return response(ApiResponse.builder()
+                .success(true)
+                .message("Close project successfully")
+                .status(HttpStatus.OK)
+                .build());
     }
 
-//    patch endpoint for recruiter to update join job approved status
-    @PatchMapping("/update-join-status")
+    @PatchMapping("/update-status-open/{project-id}")
+    @Operation(summary = "Update project status to open")
+    public ResponseEntity<ApiResponse> updateStatusOpen(@PathVariable("project-id") UUID projectId) {
+        projectService.updateProjectStatusOpen(projectId);
+        return response(ApiResponse.builder()
+                .success(true)
+                .message("Open project successfully")
+                .status(HttpStatus.OK)
+                .build());
+    }
+
+    @PatchMapping("/update-join-status-approved/{project-id}/{developer-id}")
     @Operation(summary = "Update project status approval")
-    public ResponseEntity<ApiResponse> updateJoinJobStatus() {
-        return null;
+    public ResponseEntity<ApiResponse> updateApprovalTrue(@PathVariable("project-id") UUID projectId, @PathVariable("developer-id") UUID developerId) {
+        projectService.updateApprovalTrue(projectId, developerId);
+        return response(ApiResponse.builder()
+                .success(true)
+                .message("Approved developer successfully")
+                .status(HttpStatus.OK)
+                .build());
     }
 
-    // join project reference in project
+    @PatchMapping("/update-join-status-deny/{project-id}/{developer-id}")
+    @Operation(summary = "Update project status approval")
+    public ResponseEntity<ApiResponse> updateApprovalClose(@PathVariable("project-id") UUID projectId, @PathVariable("developer-id") UUID developerId) {
+        projectService.updateApprovalClose(projectId, developerId);
+        return response(ApiResponse.builder()
+                .success(true)
+                .message("Remove developer from project successfully")
+                .status(HttpStatus.OK)
+                .build());
+    }
 
     @PostMapping("/join")
     @Operation(summary = "Join project")
-    public ResponseEntity<ApiResponse> createJoinProject(@RequestBody JoinProject joinProjectRequest) {
+    public ResponseEntity<ApiResponse> createJoinProject(@RequestBody JoinProjectRequest joinProjectRequest) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("Join project successfully")

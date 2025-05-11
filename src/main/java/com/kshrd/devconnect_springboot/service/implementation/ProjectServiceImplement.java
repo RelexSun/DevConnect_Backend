@@ -2,6 +2,7 @@ package com.kshrd.devconnect_springboot.service.implementation;
 
 import com.kshrd.devconnect_springboot.exception.BadRequestException;
 import com.kshrd.devconnect_springboot.exception.NotFoundException;
+import com.kshrd.devconnect_springboot.model.dto.request.JoinProjectRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectPositionRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
 import com.kshrd.devconnect_springboot.model.entity.AppUser;
@@ -27,6 +28,7 @@ public class ProjectServiceImplement implements ProjectService {
     private final PositionRepository positionRepository;
     private final SkillRepository skillRepository;
     private final JoinProjectRepository joinProjectRepository;
+    private final AppUserRepository appUserRepository;
 
     @Override
     public List<Project> getAllProject(Integer page, Integer size) {
@@ -109,17 +111,15 @@ public class ProjectServiceImplement implements ProjectService {
     }
 
     @Override
-    public JoinProject createJoinProject(JoinProject joinProject) {
+    public JoinProject createJoinProject(JoinProjectRequest joinProject) {
         Project project = projectRepository.getProjectById(joinProject.getProjectId());
         if(project == null) {
             throw new NotFoundException("Project not found");
         }
-        for (UUID p : joinProject.getPositionId()) {
-            if (positionRepository.getPositionById(p) == null) throw new NotFoundException("Position not found");
-        }
-        for (UUID p : joinProject.getPositionId()) {
-            if(projectPositionRepository.getPositionByProject(project.getProjectId(), p) == null) throw new NotFoundException("Position don't exist in the project");
-        }
+        if (positionRepository.getPositionById(joinProject.getPositionId()) == null) throw new NotFoundException("Position not found");
+        if(projectPositionRepository.getPositionByProject(project.getProjectId(), joinProject.getPositionId()) == null) throw new NotFoundException("Position don't exist in the project");
+        if (appUserRepository.getUserById(joinProject.getDeveloperId()) == null) throw new NotFoundException("Developer not found");
+        if(appUserRepository.getUserById(joinProject.getDeveloperId()).getIsRecruiter()) throw new BadRequestException("Only developer allow to join");
         return joinProjectRepository.createJoinProject(joinProject);
     }
 
@@ -130,6 +130,26 @@ public class ProjectServiceImplement implements ProjectService {
             throw new NotFoundException("Project not found");
         }
         return projectPositionRepository.getAllPositionByProjectId(projectId);
+    }
+
+    @Override
+    public void updateProjectStatusClose(UUID projectId) {
+        projectRepository.updateProjectStatusClose(projectId);
+    }
+
+    @Override
+    public void updateProjectStatusOpen(UUID projectId) {
+        projectRepository.updateProjectStatusOpen(projectId);
+    }
+
+    @Override
+    public void updateApprovalTrue(UUID projectId, UUID developerId) {
+        joinProjectRepository.updateApprovalTrue(projectId, developerId);
+    }
+
+    @Override
+    public void updateApprovalClose(UUID projectId, UUID developerId) {
+        joinProjectRepository.updateApprovalFalse(projectId, developerId);
     }
 
 }
