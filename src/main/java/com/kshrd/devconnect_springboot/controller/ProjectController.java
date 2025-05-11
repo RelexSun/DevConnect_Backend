@@ -96,6 +96,18 @@ public class ProjectController extends BaseController {
     }
 
     // patch endpoint for recruiter to update is open status
+    @PatchMapping("/update-status")
+    public ResponseEntity<ApiResponse> updateStatus() {
+        return null;
+    }
+
+//    patch endpoint for recruiter to update join job approved status
+    @PatchMapping("/update-join-status")
+    public ResponseEntity<ApiResponse> updateJoinJobStatus() {
+        return null;
+    }
+
+    // join project reference in project
 
     @PostMapping("/join")
     public ResponseEntity<ApiResponse> createJoinProject(@RequestBody JoinProject joinProjectRequest) {
