@@ -14,8 +14,8 @@ public interface ResumeRepository {
     // GET Resume BY ID
     @Select("""
         SELECT *
-        FROM resume
-        WHERE developer_id = #{id}
+        FROM resumes
+        WHERE user_id = #{id}
     """)
     @Results(id = "BaseResultMap", value = {
             @Result(property = "resumeId", column = "resume_id"),
@@ -27,24 +27,24 @@ public interface ResumeRepository {
             @Result(property = "position", column = "position"),
             @Result(property = "description", column = "description"),
             @Result(property = "information", column = "information" , typeHandler = ResumeInformationTypeHandler.class),
-            @Result(property = "developerId", column = "developer_id")
+            @Result(property = "developerId", column = "user_id")
     })
     Resume selectCurrentResumes(@Param("id") UUID id);
     
     // DELETE Resume
     @Select("""
         DELETE
-        FROM resume
-        WHERE resume_id = #{resumeId}
+        FROM resumes
+        WHERE user_id = #{userId}
         RETURNING *
         """)
         @ResultMap("BaseResultMap")
-    Resume deleteResumes(UUID resumeId);
+    Resume deleteResumes(UUID userId);
 
     // INSERT Resume
     @Select("""
-        INSERT INTO resume
-        (fullname, phone_number, address, email, dob, position, description, information, developer_id)
+        INSERT INTO resumes
+        (fullname, phone_number, address, email, dob, position, description, information, user_id)
         VALUES
         (
             #{resume.fullName},
@@ -64,7 +64,7 @@ public interface ResumeRepository {
     Resume insertResumes(@Param("resume") ResumeRequest entity , UUID developerId);
     // UPDATE  Resume
     @Select("""
-    UPDATE resume
+    UPDATE resumes
     SET
          fullname = #{resume.fullName},
          phone_number = #{resume.phoneNumber},
@@ -74,20 +74,10 @@ public interface ResumeRepository {
          position = #{resume.position},
          description = #{resume.description},
          information = #{resume.information, typeHandler=com.kshrd.devconnect_springboot.config.ResumeInformationTypeHandler}
-    WHERE developer_id = #{developerId}
+    WHERE user_id = #{developerId}
     RETURNING *;
     """)
     @ResultMap("BaseResultMap")
-    
     Resume updateResumes(@Param("resume") ResumeRequest entity , UUID developerId);
-
-    // GET Resume BY Developer ID
-    @Select("""
-        SELECT *
-        FROM resume
-        WHERE developer_id = #{developerId}
-    """)
-    @ResultMap("BaseResultMap")
-    List<Resume> selectResumesByDeveloperId(@Param("developerId") UUID developerId);
 
 }

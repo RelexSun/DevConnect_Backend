@@ -17,7 +17,6 @@ import java.util.UUID;
 @SecurityRequirement(name = "bearerAuth")
 public class ResumeController extends BaseController {
     private final ResumeService resumesService;
-
     @GetMapping("get")
     public ResponseEntity<ApiResponse> getCurrentResumes() {
         return response(ApiResponse.builder()
