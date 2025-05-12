@@ -44,18 +44,19 @@ public interface JoinProjectRepository {
     """)
     void deleteAllJoinProject(UUID projectId);
 
-    @Update("""
-        UPDATE join_projects SET is_approved = true WHERE project_id = #{projectId} AND user_id = #{userId}
-    """)
-    void updateApprovalTrue(UUID projectId, UUID userId);
-
-    @Update("""
-        UPDATE join_projects SET is_approved = false WHERE project_id = #{projectId} AND user_id = #{userId}
-    """)
-    void updateApprovalFalse(UUID projectId, UUID userId);
-
     @Select("""
-        SELECT COUNT(*) FROM join_projects WHERE project_id = #{projectId} AND is_approved = true
+        SELECT COUNT(*) FROM join_projects WHERE project_id = #{projectId} AND position_id = #{positionId} AND is_approved = true
     """)
-    Integer getApprovedCount(UUID projectId);
+    Integer getApprovedCount(UUID projectId, UUID positionId);
+
+    @ResultMap("baseMapper")
+    @Select("""
+        SELECT * FROM join_projects WHERE developer_id = #{developerId}
+    """)
+    JoinProject getJoinProjectByDeveloperId(UUID developerId);
+
+    @Update("""
+        UPDATE join_projects SET is_approved = #{status} WHERE project_id = #{projectId} AND developer_id = #{developerId}
+    """)
+    void updateApprovalStatus(Boolean status, UUID projectId, UUID developerId);
 }

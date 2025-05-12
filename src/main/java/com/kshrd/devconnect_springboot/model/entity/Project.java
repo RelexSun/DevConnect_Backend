@@ -22,6 +22,4 @@ public class Project {
     private List<Skill> skills;
     private List<ProjectPosition> positions;
     private List<JoinProject> joinProjects;
-    private List<JoinProject> requestToJoin;
-    private List<JoinProject> approved;
 }

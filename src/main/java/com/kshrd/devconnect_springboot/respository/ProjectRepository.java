@@ -15,9 +15,7 @@ public interface ProjectRepository {
             @Result(property = "owner", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
             @Result(property = "skills", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectSkillRepository.getSkillByProjectId")),
             @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById")),
-            @Result(property = "joinProjects", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectId")),
-            @Result(property = "requestToJoin", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectIdAndDeny")),
-            @Result(property = "approved", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectIdAndApproved"))
+            @Result(property = "joinProjects", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectId"))
     })
     @Select("""
         SELECT * FROM projects
@@ -64,12 +62,7 @@ public interface ProjectRepository {
     void deleteProject(UUID userId, UUID projectId);
 
     @Update("""
-        UPDATE projects SET is_open = false WHERE project_id = #{projectId}
+        UPDATE projects SET is_open = #{status} WHERE project_id = #{projectId} AND user_id = #{ownerId}
     """)
-    void updateProjectStatusClose(UUID projectId);
-
-    @Update("""
-        UPDATE projects SET is_open = true WHERE project_id = #{projectId}
-    """)
-    void updateProjectStatusOpen(UUID projectId);
+    void updateProjectStatus(Boolean status, UUID projectId, UUID ownerId);
 }
