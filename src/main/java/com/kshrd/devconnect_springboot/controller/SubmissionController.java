@@ -33,7 +33,7 @@ public class SubmissionController extends BaseController {
                 .build());
     }
     @PostMapping("/testCode/{codeId}")
-    public ResponseEntity<ApiResponse> testStudentCode(@RequestBody @Valid String studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse> testStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
         String finalCode = submissionService.testStudentCode(studentCode , codeId);
         return ResponseEntity.ok(ApiResponse.builder()
                 .success(true)

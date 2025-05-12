@@ -114,6 +114,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
         return "Passed";
     }
+    @Override
     public String submitCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException {
         String result = evaluateStudentCode(studentCode.getCode(), codeId);
         if ("Passed".equals(result)) {
@@ -121,7 +122,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
         return result;
     }
-    public String testStudentCode(String studentCode, UUID codeId) throws JsonProcessingException {
-        return evaluateStudentCode(studentCode, codeId);
+    @Override
+    public String testStudentCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException {
+        return evaluateStudentCode(studentCode.getCode(), codeId);
     }
 }

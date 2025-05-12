@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface SubmissionService {
     String evaluateStudentCode(String studentCode, UUID codeId) throws JsonProcessingException;
     String submitCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException;
-    String testStudentCode(String studentCode, UUID codeId) throws JsonProcessingException;
+    String testStudentCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException;
 }
