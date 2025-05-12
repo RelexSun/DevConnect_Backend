@@ -117,9 +117,16 @@ public class ProjectServiceImplement implements ProjectService {
             throw new NotFoundException("Project not found");
         }
         if (positionRepository.getPositionById(joinProject.getPositionId()) == null) throw new NotFoundException("Position not found");
-        if(projectPositionRepository.getPositionByProject(project.getProjectId(), joinProject.getPositionId()) == null) throw new NotFoundException("Position don't exist in the project");
+        if (projectPositionRepository.getPositionByProject(project.getProjectId(), joinProject.getPositionId()) == null) throw new NotFoundException("Position don't exist in the project");
         if (appUserRepository.getUserById(joinProject.getDeveloperId()) == null) throw new NotFoundException("Developer not found");
-        if(appUserRepository.getUserById(joinProject.getDeveloperId()).getIsRecruiter()) throw new BadRequestException("Only developer allow to join");
+        if (appUserRepository.getUserById(joinProject.getDeveloperId()).getIsRecruiter()) throw new BadRequestException("Only developer allow to join");
+
+//        if maxMember < approved join should throw error
+//        for (ProjectPosition p : project.getPositions()) {
+//            if (joinProjectRepository.getApprovedCount(project.getProjectId()) > projectPositionRepository.getPositionByProject(project.getProjectId(), p.getPositionId()).getMaxMembers()) {
+//                throw new BadRequestException("");
+//            }
+//        }
         return joinProjectRepository.createJoinProject(joinProject);
     }
 

@@ -53,4 +53,9 @@ public interface JoinProjectRepository {
         UPDATE join_projects SET is_approved = false WHERE project_id = #{projectId} AND user_id = #{userId}
     """)
     void updateApprovalFalse(UUID projectId, UUID userId);
+
+    @Select("""
+        SELECT COUNT(*) FROM join_projects WHERE project_id = #{projectId} AND is_approved = true
+    """)
+    Integer getApprovedCount(UUID projectId);
 }
