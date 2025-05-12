@@ -3,6 +3,7 @@ package com.kshrd.devconnect_springboot.  model.entity;
     
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
@@ -23,5 +24,5 @@ public class Jobs {
        private AppUserResponse creator;
        private JobBoard jobBoard;
        private String jobType;
-         private Integer pax;
+       private Integer pax;
 }

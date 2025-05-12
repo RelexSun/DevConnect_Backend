@@ -1,6 +1,7 @@
 package com.kshrd.devconnect_springboot.respository;
 
 import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
+import com.kshrd.devconnect_springboot.model.entity.Skill;
 import com.kshrd.devconnect_springboot.model.entity.Topic;
 import org.apache.ibatis.annotations.*;
 
@@ -17,8 +18,11 @@ public interface TopicRepository {
     """)
     @Results(id = "BaseResultMap", value = {
             @Result(property = "topicId", column = "topic_id"),
+            @Result(property = "title", column = "title"),
             @Result(property = "content", column = "content"),
             @Result(property = "postedAt", column = "created_at"),
+            @Result(property = "skills", column = "topic_id",
+                    many = @Many(select = "com.kshrd.devconnect_springboot.respository.TopicRepository.getSkillByTopicId")),
             @Result(property = "creator", column = "user_id" ,
                     one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
             @Result(property = "comments", column = "topic_id",
@@ -39,9 +43,10 @@ public interface TopicRepository {
     // INSERT Topic
     @Select("""
         INSERT INTO topics
-        (content, created_at, user_id)
+        (title, content, created_at, user_id)
         VALUES
         (
+            #{topics.title},
             #{topics.content},
             #{topics.postedAt},
             #{creatorId}
@@ -56,6 +61,7 @@ public interface TopicRepository {
     @Select("""
     UPDATE topics
     SET
+        title = #{topics.title},
          content = #{topics.content},
          created_at = #{topics.postedAt},
          user_id = #{creatorId}
@@ -67,11 +73,25 @@ public interface TopicRepository {
     Topic updateTopics(UUID id , @Param("topics") TopicRequest entity , UUID creatorId);
     
     // GET ALL Topic
-        
     @Select("""
         SELECT * FROM topics
     """)
     @ResultMap("BaseResultMap")
-    
     List<Topic> getAllTopics();
+
+    // ADD SKILL TO TOPIC
+    @Insert("""
+        INSERT INTO topic_skill (topic_id, skill_id)
+        VALUES (#{topicId}, #{skillId})
+    """)
+    void insertSkillToTopic(@Param("topicId") UUID topicId, @Param("skillId") UUID skillId);
+
+    // GET SKILL BY TOPIC ID
+    @Select("""
+        SELECT s.skill_name
+        FROM skills s
+        JOIN topic_skill ts ON s.skill_id = ts.skill_id
+        WHERE ts.topic_id = #{topicId}
+    """)
+    List<String> getSkillByTopicId(UUID topicId);
 }
