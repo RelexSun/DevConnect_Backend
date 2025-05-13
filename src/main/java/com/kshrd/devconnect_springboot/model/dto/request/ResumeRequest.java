@@ -1,6 +1,6 @@
 package com.kshrd.devconnect_springboot.model.dto.request;
 
-import com.kshrd.devconnect_springboot.model.templeJsonb.resumeinfomation.ResumeInformation;
+import com.kshrd.devconnect_springboot.model.templeJsonb.resumeInfomation.ResumeInformation;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -8,9 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

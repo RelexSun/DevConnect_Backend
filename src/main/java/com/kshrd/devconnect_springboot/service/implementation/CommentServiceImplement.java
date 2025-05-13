@@ -24,8 +24,8 @@ public class CommentServiceImplement implements CommentService {
     }
 
     @Override
-    public List<Comment> getAllComments() {
-        return repository.getAllComments();
+    public List<Comment> getAllComments(Integer page, Integer size) {
+        return repository.getAllComments(size, page);
     }
 
     @Override

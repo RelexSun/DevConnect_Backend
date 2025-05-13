@@ -1,5 +1,7 @@
 package com.kshrd.devconnect_springboot.model.entity;
 
+import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
+import com.kshrd.devconnect_springboot.model.dto.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,8 @@ import java.util.UUID;
 public class JoinProject {
     private String title;
     private String description;
+    private Boolean isApproved;
     private UUID projectId;
-    private List<UUID> positionId;
-    private List<UUID> developerId;
+    private Position position;
+    private UserResponse developer;
 }

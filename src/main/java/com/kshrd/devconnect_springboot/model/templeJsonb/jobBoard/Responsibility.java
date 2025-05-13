@@ -1,4 +1,4 @@
-package com.kshrd.devconnect_springboot.model.templeJsonb.resumeinfomation;
+package com.kshrd.devconnect_springboot.model.templeJsonb.jobBoard;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Skill {
-    private String skillName;
+public class Responsibility {
+    private String responsibility;
 }
