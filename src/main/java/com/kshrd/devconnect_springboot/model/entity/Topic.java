@@ -21,6 +21,6 @@ public class Topic {
        private String content;
        private LocalDateTime postedAt;
        private AppUserResponse creator;
-         private List<String> skills;
+       private List<String> skills;
        private List<Comment> comments;
 }
