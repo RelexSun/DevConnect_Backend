@@ -23,6 +23,7 @@ public interface JobsRepository {
             @Result(property = "description", column = "description"),
             @Result(property = "jobBoard", column = "job_board", typeHandler = com.kshrd.devconnect_springboot.config.JobBoardTypeHandler.class),
             @Result(property = "pax", column = "pax"),
+            @Result(property = "skills", column = "job_id" , many = @Many(select = "com.kshrd.devconnect_springboot.respository.JobSkillRepository.getSkillByJobId")),
             @Result(property = "jobType", column = "job_type" , one = @One(select = "com.kshrd.devconnect_springboot.respository.JobsRepository.selectJobTypeById")),
             @Result(property = "postedDate", column = "posted_date"),
             @Result(property = "creator", column = "creator_id" , one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
@@ -63,13 +64,13 @@ public interface JobsRepository {
             #{jobs.postedDate},
             #{creatorId},
             #{jobs.jobBoard, typeHandler=com.kshrd.devconnect_springboot.config.JobBoardTypeHandler},
-            #{jobTypeId},
+            #{jobs.jobTypeId},
             #{jobs.pax}
         )
         RETURNING *;
         """)
         @ResultMap("BaseResultMap")
-    Jobs insertJobs(@Param("jobs") JobsRequest entity , UUID creatorId , UUID jobTypeId);
+    Jobs insertJobs(@Param("jobs") JobsRequest entity , UUID creatorId);
 
     // UPDATE  Jobs
     @Select("""
@@ -82,13 +83,13 @@ public interface JobsRepository {
          description = #{jobs.description},
          job_board = #{jobs.jobBoard, typeHandler=com.kshrd.devconnect_springboot.config.JobBoardTypeHandler},
          posted_date = #{jobs.postedDate},
-         job_type = #{jobTypeId},
+         job_type = #{jobs.jobTypeId},
          pax = #{jobs.pax}
          WHERE job_id = #{id}
     RETURNING *;
     """)
     @ResultMap("BaseResultMap")
-    Jobs updateJobs(UUID id , @Param("jobs") JobsRequest entity , UUID jobTypeId);
+    Jobs updateJobs(UUID id , @Param("jobs") JobsRequest entity);
 
     // GET ALL Jobs
     @Select("""
@@ -116,4 +117,5 @@ public interface JobsRepository {
         WHERE job_type_id = #{jobTypeId}
     """)
     String selectJobTypeById(@Param("jobTypeId") UUID jobTypeId);
+
 }

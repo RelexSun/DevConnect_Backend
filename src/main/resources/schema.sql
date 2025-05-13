@@ -290,3 +290,12 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     PRIMARY KEY (target_id, bookmark_by, target_type),
     CHECK (target_type IN ('project', 'hackathon', 'recruiter', 'developer', 'job'))
     );
+
+-- topic_skill
+CREATE TABLE IF NOT EXISTS topic_skill (
+   topic_id uuid NOT NULL,
+   skill_id uuid NOT NULL,
+   FOREIGN KEY (topic_id) REFERENCES topics(topic_id),
+   FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
+);
+

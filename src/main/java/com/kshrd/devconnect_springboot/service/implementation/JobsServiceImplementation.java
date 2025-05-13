@@ -2,7 +2,9 @@ package com.kshrd.devconnect_springboot.  service.implementation;
 
 import java.util.List;
 
-import com.kshrd.devconnect_springboot.exception.BadRequestException;
+import com.kshrd.devconnect_springboot.exception.NotFoundException;
+import com.kshrd.devconnect_springboot.respository.JobSkillRepository;
+import com.kshrd.devconnect_springboot.respository.SkillRepository;
 import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JobsServiceImplementation implements JobsService {
     private final JobsRepository repository;
-    UUID jobType;
+    private final JobSkillRepository jobSkillRepository;
+    private final SkillRepository skillRepository;
     @Override
     public Jobs getJobsById(UUID id) {
         return repository.selectJobsById(id);
@@ -29,18 +32,29 @@ public class JobsServiceImplementation implements JobsService {
 
     @Override
     public Jobs createJobs(JobsRequest entity) {
-        UUID jobType = jobTypeId(entity.getJobType());
-        Jobs job = repository.insertJobs(entity , CurrentUser.appUserId , jobType);
-        if (job != null) {
-            throw new BadRequestException("Job is not created");
+        Jobs inserted = repository.insertJobs(entity, CurrentUser.appUserId);
+        List<UUID> skillIds = entity.getSkillId();
+        for (UUID skillId : skillIds) {
+            if (skillRepository.getSkillById(skillId) == null) {
+                throw new NotFoundException("Skill not found with id: " + skillId);
+            }
+            jobSkillRepository.insertSkillByJobId(inserted.getJobId(), skillId);
         }
-        return job;
+        return inserted;
     }
 
     @Override
     public Jobs updateJobs(UUID id, JobsRequest entity) {
-        UUID jobType = jobTypeId(entity.getJobType());
-        return repository.updateJobs(id, entity , jobType);
+        Jobs updateJobs = repository.updateJobs(id , entity);
+        jobSkillRepository.deleteSkillByJobId(updateJobs.getJobId());
+        List<UUID> skillIds = entity.getSkillId();
+        for (UUID skillId : skillIds) {
+            if (skillRepository.getSkillById(skillId) == null) {
+                throw new NotFoundException("Skill not found with id: " + skillId);
+            }
+            jobSkillRepository.insertSkillByJobId(updateJobs.getJobId(), skillId);
+        }
+        return updateJobs;
     }
 
     @Override
@@ -59,15 +73,4 @@ public class JobsServiceImplementation implements JobsService {
         return repository.selectJobsByCreatorId(CurrentUser.appUserId);
     }
 
-    private UUID jobTypeId(String jobType) {
-        if (jobType.equalsIgnoreCase("INTERNSHIP")) {
-            return UUID.fromString("686e7d59-5066-4c1e-95c9-d8f2fbd9659a");
-        } else if (jobType.equalsIgnoreCase("FULL-TIME")) {
-            return UUID.fromString("caed1993-351d-4d4f-8921-e58e51783f7f");
-        } else if (jobType.equalsIgnoreCase("PART-TIME")) {
-            return UUID.fromString("cdb506b6-1b8e-45ef-8d31-3b8500ca3f6a");
-        } else {
-            throw new IllegalArgumentException("Invalid job type: FULL-TIME , PART-TIME , INTERNSHIP");
-        }
-    }
 }

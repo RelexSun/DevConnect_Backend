@@ -2,6 +2,7 @@ package com.kshrd.devconnect_springboot.  controller;
 
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
+import com.kshrd.devconnect_springboot.model.dto.response.JoinJobResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -34,7 +35,6 @@ public class JoinJobController  extends BaseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getJoinJobById(@PathVariable UUID id) {
-        JoinJob entity = joinJobService.getJoinJobById(id);
          return response(ApiResponse.builder()
                 .success(true)
                 .message("JoinJob retrieved by id successfully")
@@ -44,12 +44,12 @@ public class JoinJobController  extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createJoinJob(@RequestBody JoinJobRequest entity) {
+    public ResponseEntity<ApiResponse> createJoinJob(@RequestBody JoinJobRequest entity , @RequestParam UUID id) {
         return response(ApiResponse.builder()
                 .success(true)
                 .message("JoinJob have been created successfully")
                 .status(HttpStatus.OK)
-                .payload(joinJobService.createJoinJob(entity))
+                .payload(joinJobService.createJoinJob(entity , id))
                 .build());
     }
 

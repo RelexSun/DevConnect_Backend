@@ -3,6 +3,7 @@ package com.kshrd.devconnect_springboot.  model.dto.request;
     
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import com.kshrd.devconnect_springboot.model.templeJsonb.jobBoard.JobBoard;
@@ -19,6 +20,7 @@ public class JobsRequest {
     private String description;
     private Date postedDate;
     private JobBoard jobBoard;
-    private String jobType;
+    private UUID jobTypeId;
     private Integer pax;
+    private List<UUID> skillId;
 }
