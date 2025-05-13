@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse {
+public class ApiResponse<T> {
     private Boolean success;
     private String message;
     private HttpStatus status;
-    private Object payload;
+    private T payload;
     private final LocalDateTime timestamp = LocalDateTime.now();
 }

@@ -1,7 +1,9 @@
 package com.kshrd.devconnect_springboot.respository;
 
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.ProjectResponse;
 import com.kshrd.devconnect_springboot.model.entity.Project;
+import com.kshrd.devconnect_springboot.utils.SqlQueryProvider;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 import java.util.UUID;
@@ -12,15 +14,12 @@ public interface ProjectRepository {
             @Result(property = "projectId", column = "project_id"),
             @Result(property = "isOpen", column = "is_open"),
             @Result(property = "createdAt", column = "created_at"),
-            @Result(property = "owner", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
+            @Result(property = "owner", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserResponseById")),
             @Result(property = "skills", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectSkillRepository.getSkillByProjectId")),
             @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById")),
             @Result(property = "joinProjects", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectId"))
     })
-    @Select("""
-        SELECT * FROM projects
-        OFFSET #{page} LIMIT #{size};
-    """)
+    @SelectProvider(type = SqlQueryProvider.class, method = "getAllProject")
     List<Project> getAllProject(Integer page, Integer size);
 
     @ResultMap("projectMapper")
@@ -63,6 +62,7 @@ public interface ProjectRepository {
 
     @Update("""
         UPDATE projects SET is_open = #{status} WHERE project_id = #{projectId} AND user_id = #{ownerId}
+        RETURNING *;
     """)
-    void updateProjectStatus(Boolean status, UUID projectId, UUID ownerId);
+    Project updateProjectStatus(Boolean status, UUID projectId, UUID ownerId);
 }

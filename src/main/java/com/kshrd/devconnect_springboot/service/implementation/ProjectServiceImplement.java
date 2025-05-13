@@ -6,10 +6,12 @@ import com.kshrd.devconnect_springboot.model.dto.request.JoinProjectRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectPositionRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
 import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
+import com.kshrd.devconnect_springboot.model.dto.response.ProjectResponse;
 import com.kshrd.devconnect_springboot.model.entity.AppUser;
 import com.kshrd.devconnect_springboot.model.entity.JoinProject;
 import com.kshrd.devconnect_springboot.model.entity.Project;
 import com.kshrd.devconnect_springboot.model.entity.ProjectPosition;
+import com.kshrd.devconnect_springboot.model.mapper.ProjectMapper;
 import com.kshrd.devconnect_springboot.respository.*;
 import com.kshrd.devconnect_springboot.service.ProjectService;
 import com.kshrd.devconnect_springboot.utils.CurrentUser;
@@ -30,11 +32,12 @@ public class ProjectServiceImplement implements ProjectService {
     private final SkillRepository skillRepository;
     private final JoinProjectRepository joinProjectRepository;
     private final AppUserRepository appUserRepository;
+    private final ProjectMapper projectMapper;
 
     @Override
-    public List<Project> getAllProject(Integer page, Integer size) {
+    public List<ProjectResponse> getAllProject(Integer page, Integer size) {
         page = (page - 1) * size;
-        return projectRepository.getAllProject(page, size);
+        return projectMapper.toDetailResponse(projectRepository.getAllProject(page, size));
     }
 
     @Override
@@ -47,9 +50,9 @@ public class ProjectServiceImplement implements ProjectService {
     }
 
     @Override
-    public List<Project> getAllProjectByUser(Integer page, Integer size) {
+    public List<ProjectResponse> getAllProjectByUser(Integer page, Integer size) {
         page = (page - 1) * size;
-        return projectRepository.getAllProjectByUser(CurrentUser.appUserId, page, size);
+        return projectMapper.toDetailResponse(projectRepository.getAllProjectByUser(CurrentUser.appUserId, page, size));
     }
 
     @Override
@@ -137,16 +140,16 @@ public class ProjectServiceImplement implements ProjectService {
         if (project == null) {
             throw new NotFoundException("Project not found");
         }
-        return projectPositionRepository.getAllPositionByProjectId(projectId);
+        return projectPositionRepository.getAllProjectPositionById(projectId);
     }
 
     @Override
-    public void updateProjectStatus(Boolean status, UUID projectId) {
+    public ProjectResponse updateProjectStatus(Boolean status, UUID projectId) {
         Project project = projectRepository.getProjectById(projectId);
         if (project == null) {
             throw new NotFoundException("Project not found");
         }
-        projectRepository.updateProjectStatus(status, projectId, CurrentUser.appUserId);
+        return projectMapper.toResponse(projectRepository.updateProjectStatus(status, projectId, CurrentUser.appUserId));
     }
 
     @Override
@@ -155,6 +158,9 @@ public class ProjectServiceImplement implements ProjectService {
         if (project == null) {
             throw new NotFoundException("Project not found");
         }
+        if (project.getOwner().getUserId() != CurrentUser.appUserId) {
+            throw new BadRequestException("You are not the owner of this project");
+        }
         AppUserResponse appUser = appUserRepository.getUserById(developerId);
         if (appUser == null) {
             throw new NotFoundException("Developer not found");
@@ -162,9 +168,7 @@ public class ProjectServiceImplement implements ProjectService {
         if (joinProjectRepository.getJoinProjectByDeveloperId(developerId) == null) {
             throw new NotFoundException("Developer didn't apply to this project");
         }
-        if (project.getOwner().getUserId() != CurrentUser.appUserId) {
-            throw new BadRequestException("You are not the owner of this project");
-        }
+
         joinProjectRepository.updateApprovalStatus(status, projectId, developerId);
     }
 

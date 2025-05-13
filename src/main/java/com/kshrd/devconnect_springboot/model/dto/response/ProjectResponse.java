@@ -1,7 +1,6 @@
-package com.kshrd.devconnect_springboot.model.entity;
+package com.kshrd.devconnect_springboot.model.dto.response;
 
-import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
-import com.kshrd.devconnect_springboot.model.dto.response.UserResponse;
+import com.kshrd.devconnect_springboot.model.entity.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Project {
+public class ProjectResponse {
     private UUID projectId;
     private String title;
     private String description;
@@ -21,6 +20,4 @@ public class Project {
     private LocalDate createdAt;
     private UserResponse owner;
     private List<Skill> skills;
-    private List<ProjectPosition> positions;
-    private List<JoinProject> joinProjects;
 }

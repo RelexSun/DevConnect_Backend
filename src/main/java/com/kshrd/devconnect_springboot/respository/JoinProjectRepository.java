@@ -13,7 +13,7 @@ public interface JoinProjectRepository {
             @Result(property = "isApproved", column = "is_approved"),
             @Result(property = "projectId", column = "project_id"),
             @Result(property = "position", column = "position_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.PositionRepository.getPositionById")),
-            @Result(property = "developer", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
+            @Result(property = "developer", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserResponseById")),
     })
     @Select("""
         SELECT * FROM join_projects WHERE project_id = #{projectId}
