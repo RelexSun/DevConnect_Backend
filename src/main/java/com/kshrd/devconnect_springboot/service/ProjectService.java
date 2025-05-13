@@ -19,8 +19,6 @@ public interface ProjectService {
     void deleteProject(UUID projectId);
     JoinProject createJoinProject(JoinProjectRequest joinProject);
     List<ProjectPosition> getAllPositionByProjectId(UUID projectId);
-    void updateProjectStatusClose(UUID projectId);
-    void updateProjectStatusOpen(UUID projectId);
-    void updateApprovalTrue(UUID projectId, UUID developerId);
-    void updateApprovalClose(UUID projectId, UUID developerId);
+    void updateProjectStatus(Boolean status, UUID projectId);
+    void updateProjectApproval(Boolean status, UUID projectId, UUID developerId);
 }

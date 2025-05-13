@@ -104,46 +104,24 @@ public class ProjectController extends BaseController {
                 .build());
     }
 
-    @PatchMapping("/update-status-close/{project-id}")
+    @PatchMapping("/update-status/{project-id}")
     @Operation(summary = "Update project status to close")
-    public ResponseEntity<ApiResponse> updateStatusClose(@PathVariable("project-id") UUID projectId) {
-        projectService.updateProjectStatusClose(projectId);
+    public ResponseEntity<ApiResponse> updateStatusClose(@RequestParam Boolean status, @PathVariable("project-id") UUID projectId) {
+        projectService.updateProjectStatus(status, projectId);
         return response(ApiResponse.builder()
                 .success(true)
-                .message("Close project successfully")
+                .message("Update project status successfully")
                 .status(HttpStatus.OK)
                 .build());
     }
 
-    @PatchMapping("/update-status-open/{project-id}")
-    @Operation(summary = "Update project status to open")
-    public ResponseEntity<ApiResponse> updateStatusOpen(@PathVariable("project-id") UUID projectId) {
-        projectService.updateProjectStatusOpen(projectId);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Open project successfully")
-                .status(HttpStatus.OK)
-                .build());
-    }
-
-    @PatchMapping("/update-join-status-approved/{project-id}/{developer-id}")
+    @PatchMapping("/update-join-status/{project-id}/{developer-id}")
     @Operation(summary = "Update project status approval")
-    public ResponseEntity<ApiResponse> updateApprovalTrue(@PathVariable("project-id") UUID projectId, @PathVariable("developer-id") UUID developerId) {
-        projectService.updateApprovalTrue(projectId, developerId);
+    public ResponseEntity<ApiResponse> updateApprovalTrue(@RequestParam Boolean status, @PathVariable("project-id") UUID projectId, @PathVariable("developer-id") UUID developerId) {
+        projectService.updateProjectApproval(status, projectId, developerId);
         return response(ApiResponse.builder()
                 .success(true)
-                .message("Approved developer successfully")
-                .status(HttpStatus.OK)
-                .build());
-    }
-
-    @PatchMapping("/update-join-status-deny/{project-id}/{developer-id}")
-    @Operation(summary = "Update project status approval")
-    public ResponseEntity<ApiResponse> updateApprovalClose(@PathVariable("project-id") UUID projectId, @PathVariable("developer-id") UUID developerId) {
-        projectService.updateApprovalClose(projectId, developerId);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Remove developer from project successfully")
+                .message("Update developer join project approval successfully")
                 .status(HttpStatus.OK)
                 .build());
     }
@@ -169,5 +147,7 @@ public class ProjectController extends BaseController {
                 .payload(projectService.getAllPositionByProjectId(projectId))
                 .build());
     }
+
+//    filtering project
 
 }

@@ -30,11 +30,7 @@ public class AppUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
-        if (isRecruiter) {
-            simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_RECRUITER"));
-        } else {
-            simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_DEVELOPER"));
-        }
+        simpleGrantedAuthorities.add(new SimpleGrantedAuthority(isRecruiter ? "ROLE_RECRUITER" : "ROLE_DEVELOPER"));
         return simpleGrantedAuthorities;
     }
 

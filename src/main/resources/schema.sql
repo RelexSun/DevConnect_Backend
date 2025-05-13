@@ -104,15 +104,16 @@ CREATE TABLE IF NOT EXISTS developer_badges (
     FOREIGN KEY (badge_id) REFERENCES badges(badge_id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (user_id, badge_id)
     );
+
 -- topics
 CREATE TABLE IF NOT EXISTS topics (
     topic_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL ,
     content VARCHAR NOT NULL ,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
-
 
 -- comments
 CREATE TABLE IF NOT EXISTS comments (
@@ -128,7 +129,6 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
-
 
 -- upvote
 CREATE TABLE IF NOT EXISTS upvote (
@@ -290,3 +290,12 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     PRIMARY KEY (target_id, bookmark_by, target_type),
     CHECK (target_type IN ('project', 'hackathon', 'recruiter', 'developer', 'job'))
     );
+
+-- topic_skill
+CREATE TABLE IF NOT EXISTS topic_skill (
+   topic_id uuid NOT NULL,
+   skill_id uuid NOT NULL,
+   FOREIGN KEY (topic_id) REFERENCES topics(topic_id),
+   FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
+);
+

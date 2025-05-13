@@ -5,6 +5,7 @@ import com.kshrd.devconnect_springboot.exception.NotFoundException;
 import com.kshrd.devconnect_springboot.model.dto.request.JoinProjectRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectPositionRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
 import com.kshrd.devconnect_springboot.model.entity.AppUser;
 import com.kshrd.devconnect_springboot.model.entity.JoinProject;
 import com.kshrd.devconnect_springboot.model.entity.Project;
@@ -39,7 +40,7 @@ public class ProjectServiceImplement implements ProjectService {
     @Override
     public Project getProjectById(UUID projectId) {
         Project project = projectRepository.getProjectById(projectId);
-        if(project == null) {
+        if (project == null) {
             throw new NotFoundException("Project not found");
         }
         return project;
@@ -54,7 +55,7 @@ public class ProjectServiceImplement implements ProjectService {
     @Override
     public Project getProjectByIdAndUser(UUID projectId) {
         Project project = projectRepository.getProjectByIdAndUser(CurrentUser.appUserId, projectId);
-        if(project == null) {
+        if (project == null) {
             throw new NotFoundException("Project not found");
         }
         return project;
@@ -70,7 +71,7 @@ public class ProjectServiceImplement implements ProjectService {
             projectSkillRepository.createProjectSkill(project.getProjectId(), s);
         }
         for (ProjectPositionRequest p : projectRequest.getPositions()) {
-            if(positionRepository.getPositionById(p.getPositionId()) == null) {
+            if (positionRepository.getPositionById(p.getPositionId()) == null) {
                 throw new NotFoundException("Position not found");
             }
             projectPositionRepository.createProjectPosition(p.getMaxMembers(), project.getProjectId(), p.getPositionId());
@@ -80,7 +81,7 @@ public class ProjectServiceImplement implements ProjectService {
 
     @Override
     public Project updateProject(UUID projectId, ProjectRequest projectRequest) {
-        if(getProjectById(projectId) == null) {
+        if (getProjectById(projectId) == null) {
             throw new NotFoundException("Project not found");
         }
         Project project = projectRepository.updateProject(projectId, projectRequest);
@@ -93,7 +94,7 @@ public class ProjectServiceImplement implements ProjectService {
             projectSkillRepository.createProjectSkill(project.getProjectId(), s);
         }
         for (ProjectPositionRequest p : projectRequest.getPositions()) {
-            if(positionRepository.getPositionById(p.getPositionId()) == null) {
+            if (positionRepository.getPositionById(p.getPositionId()) == null) {
                 throw new NotFoundException("Position not found");
             }
             projectPositionRepository.createProjectPosition(p.getMaxMembers(), project.getProjectId(), p.getPositionId());
@@ -104,7 +105,7 @@ public class ProjectServiceImplement implements ProjectService {
     @Override
     public void deleteProject(UUID projectId) {
         Project project = projectRepository.getProjectByIdAndUser(CurrentUser.appUserId, projectId);
-        if(project == null) {
+        if (project == null) {
             throw new NotFoundException("Project not found");
         }
         projectRepository.deleteProject(CurrentUser.appUserId, projectId);
@@ -113,43 +114,58 @@ public class ProjectServiceImplement implements ProjectService {
     @Override
     public JoinProject createJoinProject(JoinProjectRequest joinProject) {
         Project project = projectRepository.getProjectById(joinProject.getProjectId());
-        if(project == null) {
+        if (project == null) {
             throw new NotFoundException("Project not found");
         }
         if (positionRepository.getPositionById(joinProject.getPositionId()) == null) throw new NotFoundException("Position not found");
-        if(projectPositionRepository.getPositionByProject(project.getProjectId(), joinProject.getPositionId()) == null) throw new NotFoundException("Position don't exist in the project");
+        if (projectPositionRepository.getPositionByProject(project.getProjectId(), joinProject.getPositionId()) == null) throw new NotFoundException("Position don't exist in the project");
         if (appUserRepository.getUserById(joinProject.getDeveloperId()) == null) throw new NotFoundException("Developer not found");
-        if(appUserRepository.getUserById(joinProject.getDeveloperId()).getIsRecruiter()) throw new BadRequestException("Only developer allow to join");
+        if (appUserRepository.getUserById(joinProject.getDeveloperId()).getIsRecruiter()) throw new BadRequestException("Only developer allow to join");
+
+//        if maxMember < approved join should throw error
+        for (ProjectPosition p : project.getPositions()) {
+            if (joinProjectRepository.getApprovedCount(project.getProjectId(), p.getPositionId()) > joinProjectRepository.getApprovedCount(project.getProjectId(), p.getPositionId())) {
+                throw new BadRequestException("Project position already full");
+            }
+        }
         return joinProjectRepository.createJoinProject(joinProject);
     }
 
     @Override
     public List<ProjectPosition> getAllPositionByProjectId(UUID projectId) {
         Project project = projectRepository.getProjectById(projectId);
-        if(project == null) {
+        if (project == null) {
             throw new NotFoundException("Project not found");
         }
         return projectPositionRepository.getAllPositionByProjectId(projectId);
     }
 
     @Override
-    public void updateProjectStatusClose(UUID projectId) {
-        projectRepository.updateProjectStatusClose(projectId);
+    public void updateProjectStatus(Boolean status, UUID projectId) {
+        Project project = projectRepository.getProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        projectRepository.updateProjectStatus(status, projectId, CurrentUser.appUserId);
     }
 
     @Override
-    public void updateProjectStatusOpen(UUID projectId) {
-        projectRepository.updateProjectStatusOpen(projectId);
-    }
-
-    @Override
-    public void updateApprovalTrue(UUID projectId, UUID developerId) {
-        joinProjectRepository.updateApprovalTrue(projectId, developerId);
-    }
-
-    @Override
-    public void updateApprovalClose(UUID projectId, UUID developerId) {
-        joinProjectRepository.updateApprovalFalse(projectId, developerId);
+    public void updateProjectApproval(Boolean status, UUID projectId, UUID developerId) {
+        Project project = projectRepository.getProjectById(projectId);
+        if (project == null) {
+            throw new NotFoundException("Project not found");
+        }
+        AppUserResponse appUser = appUserRepository.getUserById(developerId);
+        if (appUser == null) {
+            throw new NotFoundException("Developer not found");
+        }
+        if (joinProjectRepository.getJoinProjectByDeveloperId(developerId) == null) {
+            throw new NotFoundException("Developer didn't apply to this project");
+        }
+        if (project.getOwner().getUserId() != CurrentUser.appUserId) {
+            throw new BadRequestException("You are not the owner of this project");
+        }
+        joinProjectRepository.updateApprovalStatus(status, projectId, developerId);
     }
 
 }

@@ -23,6 +23,7 @@ public class Jobs {
        private Date postedDate;
        private AppUserResponse creator;
        private JobBoard jobBoard;
+       private List<String> skills;
        private String jobType;
        private Integer pax;
 }
