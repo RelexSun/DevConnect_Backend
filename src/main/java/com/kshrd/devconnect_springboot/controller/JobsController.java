@@ -12,11 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import com.kshrd.devconnect_springboot.model.dto.request.JobsRequest;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/jobs")
+@RequestMapping("/api/v1/jobs")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class JobsController extends BaseController {
@@ -24,74 +26,39 @@ public class JobsController extends BaseController {
     private final JobsService jobsService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse>  getAllJobs(@RequestParam(defaultValue = "1") Integer page,
-                                                   @RequestParam(defaultValue = "10") Integer size) {
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs retrieved successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.getAllJobs(page, size))
-                .build());
+    public ResponseEntity<ApiResponse<List<Jobs>>>  getAllJobs(@RequestParam(defaultValue = "1") Integer page,
+                                                         @RequestParam(defaultValue = "10") Integer size) {
+        return response("Jobs retrieved successfully",jobsService.getAllJobs(page, size));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getJobsById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Jobs>> getJobsById(@PathVariable UUID id) {
         Jobs entity = jobsService.getJobsById(id);
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs retrieved by id successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.getJobsById(id))
-                .build());
+        return response("Jobs retrieved by id successfully",jobsService.getJobsById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createJobs(@RequestBody JobsRequest entity) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs have been created successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.createJobs(entity))
-                .build());
+    public ResponseEntity<ApiResponse<Jobs>> createJobs(@RequestBody JobsRequest entity) {
+        return response("Jobs have been created successfully", HttpStatus.CREATED, jobsService.createJobs(entity));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateJobs(@PathVariable UUID id, @RequestBody JobsRequest entity) {
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs have been updated successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.updateJobs(id , entity))
-                .build());
+    public ResponseEntity<ApiResponse<Jobs>> updateJobs(@PathVariable UUID id, @RequestBody JobsRequest entity) {
+        return response("Jobs have been updated successfully", jobsService.updateJobs(id , entity));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteJobs(@PathVariable UUID id) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs have been deleted successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.deleteJobs(id))
-                .build());
+    public ResponseEntity<ApiResponse<Jobs>> deleteJobs(@PathVariable UUID id) {
+        return response("Jobs have been deleted successfully", jobsService.deleteJobs(id));
     }
 
     @PutMapping("update/status/{id}")
-    public ResponseEntity<ApiResponse> updateStatusJobs(@PathVariable UUID id, @RequestParam Boolean status) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs have been updated successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.updateStatusJobs(id , status))
-                .build());
+    public ResponseEntity<ApiResponse<Jobs>> updateStatusJobs(@PathVariable UUID id, @RequestParam Boolean status) {
+        return response("Jobs have been updated successfully", jobsService.updateStatusJobs(id , status));
     }
     @GetMapping("/get-jobs-by-creator")
-    public ResponseEntity<ApiResponse> getAllJobsByCreatorId() {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Jobs retrieved by creator id successfully")
-                .status(HttpStatus.OK)
-                .payload(jobsService.getAllJobsByCreatorId())
-                .build());
+    public ResponseEntity<ApiResponse<List<Jobs>>> getAllJobsByCreatorId() {
+        return response("Jobs retrieved by creator id successfully",jobsService.getAllJobsByCreatorId());
     }
 
 }

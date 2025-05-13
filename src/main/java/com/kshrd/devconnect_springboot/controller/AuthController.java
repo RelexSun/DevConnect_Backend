@@ -5,6 +5,8 @@ import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.model.dto.request.AppUserRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.AuthRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.ResetRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
+import com.kshrd.devconnect_springboot.model.dto.response.AuthResponse;
 import com.kshrd.devconnect_springboot.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -24,80 +26,49 @@ public class AuthController extends BaseController {
 
     @PostMapping("/login")
     @Operation(summary = "User login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody AuthRequest request) throws Exception {
-        return response(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Login successfully")
-                .payload(authService.login(request))
-                .build());
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody AuthRequest request) throws Exception {
+        return response("Login successfully", authService.login(request));
     }
 
     @SneakyThrows
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
-    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AppUserRequest request){
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Register successfully")
-                .status(HttpStatus.CREATED)
-                .payload(authService.register(request))
-                .build());
+    public ResponseEntity<ApiResponse<AppUserResponse>> register(@Valid @RequestBody AppUserRequest request){
+        return response("Register successfully", HttpStatus.CREATED, authService.register(request));
     }
 
     @PostMapping("/verify")
     @Operation(summary = "Verify email with OTP")
-    public ResponseEntity<ApiResponse> verify(@Email @RequestParam String email, @RequestParam @Positive(message = "Otp code cannot be negative or zero") String otpCode) {
+    public ResponseEntity<ApiResponse<Object>> verify(@Email @RequestParam String email, @RequestParam @Positive(message = "Otp code cannot be negative or zero") String otpCode) {
         authService.verify(email, otpCode);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Verified successfully!!!")
-                .status(HttpStatus.OK)
-                .build());
+        return response("Verified successfully!!!");
     }
 
     @SneakyThrows
     @PostMapping("/resend")
     @Operation(summary = "Resent verification OTP")
-    public ResponseEntity<ApiResponse> resend(@Email @RequestParam String email) {
+    public ResponseEntity<ApiResponse<Object>> resend(@Email @RequestParam String email) {
         authService.resend(email);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("OTP has successfully resent")
-                .status(HttpStatus.OK)
-                .build());
+        return response("OTP has successfully resent");
     }
 
     @PostMapping("/forgot")
     @Operation(summary = "Send otp code to email")
-    public ResponseEntity<ApiResponse> verifyEmail(@Email @RequestParam String email) {
+    public ResponseEntity<ApiResponse<Object>> verifyEmail(@Email @RequestParam String email) {
         authService.forgotPassword(email);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("success")
-                .status(HttpStatus.OK)
-                .build());
+        return response("Email verified");
     }
 
     @PostMapping("/forgot/verify")
     @Operation(summary = "Verify otp in forgot password")
-    public ResponseEntity<ApiResponse> verifyForgot(@Email @RequestParam String email, @RequestParam String otp) {
+    public ResponseEntity<ApiResponse<Object>> verifyForgot(@Email @RequestParam String email, @RequestParam String otp) {
         authService.verifyForgot(email, otp);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("success")
-                .status(HttpStatus.OK)
-                .build());
+        return response("Verify forgot password");
     }
 
     @PostMapping("/forgot/reset")
     @Operation(summary = "Reset password otp in forgot password")
-    public ResponseEntity<ApiResponse> resetPassword(@Valid @RequestBody ResetRequest request) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("success")
-                .status(HttpStatus.OK)
-                .payload(authService.resetPassword(request.getEmail(), request.getOtp(), request.getPassword()))
-                .build());
+    public ResponseEntity<ApiResponse<Object>> resetPassword(@Valid @RequestBody ResetRequest request) {
+        return response("successful", authService.resetPassword(request.getEmail(), request.getOtp(), request.getPassword()));
     }
 }

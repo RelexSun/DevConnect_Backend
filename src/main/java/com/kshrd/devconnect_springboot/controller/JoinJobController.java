@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/joinJob")
+@RequestMapping("/api/v1/join-job")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class JoinJobController  extends BaseController {
@@ -24,63 +24,33 @@ public class JoinJobController  extends BaseController {
     private final JoinJobService joinJobService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse>  getAllJoinJob() {
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("JoinJob retrieved successfully")
-                .status(HttpStatus.OK)
-                .payload(joinJobService.getAllJoinJob())
-                .build());
+    public ResponseEntity<ApiResponse<List<JoinJobResponse>>> getAllJoinJob() {
+        return response("Join job retrieved successfully", joinJobService.getAllJoinJob());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getJoinJobById(@PathVariable UUID id) {
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("JoinJob retrieved by id successfully")
-                .status(HttpStatus.OK)
-                .payload(joinJobService.getJoinJobById(id))
-                .build());
+    public ResponseEntity<ApiResponse<JoinJobResponse>> getJoinJobById(@PathVariable UUID id) {
+        return response("Join job retrieved by id successfully", joinJobService.getJoinJobById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createJoinJob(@RequestBody JoinJobRequest entity , @RequestParam UUID id) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("JoinJob have been created successfully")
-                .status(HttpStatus.OK)
-                .payload(joinJobService.createJoinJob(entity , id))
-                .build());
+    public ResponseEntity<ApiResponse<JoinJobResponse>> createJoinJob(@RequestBody JoinJobRequest entity , @RequestParam UUID id) {
+        return response("Join job have been created successfully", HttpStatus.CREATED, joinJobService.createJoinJob(entity , id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteJoinJob(@PathVariable UUID id) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("JoinJob have been deleted successfully")
-                .status(HttpStatus.OK)
-                .payload(joinJobService.deleteJoinJob(id))
-                .build());
+    public ResponseEntity<ApiResponse<JoinJobResponse>> deleteJoinJob(@PathVariable UUID id) {
+        return response("Join job have been deleted successfully", joinJobService.deleteJoinJob(id));
     }
 
     @PutMapping("/{joinId}")
-    public ResponseEntity<ApiResponse> updateIsApprove(@PathVariable UUID joinId, @RequestParam boolean isApprove) {
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("approve developer successfully")
-                .status(HttpStatus.OK)
-                .payload(joinJobService.updateIsApprove(isApprove , joinId))
-                .build());
+    public ResponseEntity<ApiResponse<JoinJobResponse>> updateIsApprove(@PathVariable UUID joinId, @RequestParam boolean isApprove) {
+        return response("Approve developer successfully", joinJobService.updateIsApprove(isApprove , joinId));
     }
 
     @GetMapping("/isApprove")
-    public ResponseEntity<ApiResponse> getAllJoinJobByIsApprove(@RequestParam Boolean isApprove) {
-         return response(ApiResponse.builder()
-                .success(true)
-                .message("JoinJob retrieved successfully")
-                .status(HttpStatus.OK)
-                .payload(joinJobService.getAllJoinJobByIsApprove(isApprove))
-                .build());
+    public ResponseEntity<ApiResponse<List<JoinJobResponse>>> getAllJoinJobByIsApprove(@RequestParam Boolean isApprove) {
+        return response("Join job retrieved successfully", joinJobService.getAllJoinJobByIsApprove(isApprove));
     }
 
 }

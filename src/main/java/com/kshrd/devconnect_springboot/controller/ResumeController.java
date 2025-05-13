@@ -3,12 +3,15 @@ package com.kshrd.devconnect_springboot.controller;
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.model.dto.request.ResumeRequest;
+import com.kshrd.devconnect_springboot.model.entity.Resume;
 import com.kshrd.devconnect_springboot.service.ResumeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,48 +21,23 @@ import java.util.UUID;
 public class ResumeController extends BaseController {
     private final ResumeService resumesService;
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllResumes() {
-        return response(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Resumes retrieved successfully")
-                .payload(resumesService.getAllResumes())
-                .build());
+    public ResponseEntity<ApiResponse<List<Resume>>> getAllResumes() {
+        return response("Resumes retrieved successfully",resumesService.getAllResumes());
         }
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getResumesById(@PathVariable UUID id) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Resumes retrieved by id successfully")
-                .payload(resumesService.getResumesById(id))
-                .build());
+    public ResponseEntity<ApiResponse<Resume>> getResumesById(@PathVariable UUID id) {
+        return response("Resumes retrieved by id successfully",resumesService.getResumesById(id));
     }
     @PostMapping
-    public ResponseEntity<ApiResponse> createResumes(@RequestBody ResumeRequest entity) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.CREATED)
-                .message("Resumes created successfully")
-                .payload(resumesService.createResumes(entity))
-                .build());
+    public ResponseEntity<ApiResponse<Resume>> createResumes(@RequestBody ResumeRequest entity) {
+        return response("Resumes created successfully", HttpStatus.CREATED, resumesService.createResumes(entity));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateResumes(@PathVariable UUID id, @RequestBody ResumeRequest entity) {
-       return response(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Resumes updated successfully")
-                .payload(resumesService.updateResumes(id, entity))
-                .build());
+    public ResponseEntity<ApiResponse<Resume>> updateResumes(@PathVariable UUID id, @RequestBody ResumeRequest entity) {
+        return response("Resumes updated successfully",resumesService.updateResumes(id, entity));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteResumes(@PathVariable UUID id) {
-       return response(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Resumes deleted successfully")
-                .payload(resumesService.deleteResumes(id))
-                .build());
+    public ResponseEntity<ApiResponse<Resume>> deleteResumes(@PathVariable UUID id) {
+        return response("Resumes deleted successfully", resumesService.deleteResumes(id));
     }
 }

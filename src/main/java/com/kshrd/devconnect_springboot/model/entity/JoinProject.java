@@ -1,6 +1,7 @@
 package com.kshrd.devconnect_springboot.model.entity;
 
 import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
+import com.kshrd.devconnect_springboot.model.dto.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,5 @@ public class JoinProject {
     private Boolean isApproved;
     private UUID projectId;
     private Position position;
-    private AppUserResponse developer;
+    private UserResponse developer;
 }

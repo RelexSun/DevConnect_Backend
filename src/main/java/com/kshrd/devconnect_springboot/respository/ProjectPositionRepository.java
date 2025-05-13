@@ -38,9 +38,9 @@ public interface ProjectPositionRepository {
     """)
     ProjectPosition getPositionByProject(UUID projectId, UUID positionId);
 
-    @ResultMap("baseMapper")
-    @Select("""
-        SELECT * FROM project_positions WHERE project_id = #{projectId}
-    """)
-    List<ProjectPosition> getAllPositionByProjectId(UUID projectId);
+//    @ResultMap("baseMapper")
+//    @Select("""
+//        SELECT * FROM project_positions WHERE project_id = #{projectId}
+//    """)
+//    List<ProjectPosition> getAllPositionByProjectId(UUID projectId);
 }
