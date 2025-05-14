@@ -26,9 +26,9 @@ public class CodeChallengeController extends BaseController {
         return response("CodeChallenge retrieved successfully", codeChallengeService.getAllCodeChallenge());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CodeChallenge>> getCodeChallengeById(@PathVariable UUID id) {
-        return response("CodeChallenge retrieved successfully", codeChallengeService.getCodeChallengeById(id));
+    @GetMapping("/{codeId}")
+    public ResponseEntity<ApiResponse<CodeChallenge>> getCodeChallengeById(@PathVariable UUID codeId) {
+        return response("CodeChallenge retrieved successfully", codeChallengeService.getCodeChallengeById(codeId));
     }
 
     @PostMapping
@@ -39,14 +39,14 @@ public class CodeChallengeController extends BaseController {
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CodeChallenge>> updateCodeChallenge(@PathVariable UUID id, @RequestBody @Valid CodeChallengeRequest entity) {
-        return response("CodeChallenge updated successfully", codeChallengeService.updateCodeChallenge(id,entity));
+    @PutMapping("/{codeId}")
+    public ResponseEntity<ApiResponse<CodeChallenge>> updateCodeChallenge(@PathVariable UUID codeId, @RequestBody @Valid CodeChallengeRequest entity) {
+        return response("CodeChallenge updated successfully", codeChallengeService.updateCodeChallenge(codeId,entity));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<CodeChallenge>> deleteCodeChallenge(@PathVariable UUID id) {
-        return response("CodeChallenge updated successfully", codeChallengeService.deleteCodeChallenge(id));
+    @DeleteMapping("/{codeId}")
+    public ResponseEntity<ApiResponse<CodeChallenge>> deleteCodeChallenge(@PathVariable UUID codeId) {
+        return response("CodeChallenge updated successfully", codeChallengeService.deleteCodeChallenge(codeId));
     }
 
 }
