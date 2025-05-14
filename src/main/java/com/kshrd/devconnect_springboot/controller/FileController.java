@@ -22,13 +22,8 @@ public class FileController extends BaseController {
     private final FileService fileService;
 
     @PostMapping(value = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse> uploadFile(@RequestParam MultipartFile file){
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Upload file successfully!")
-                .status(HttpStatus.CREATED)
-                .payload(fileService.fileUpload(file))
-                .build());
+    public ResponseEntity<ApiResponse<FileMetadata>> uploadFile(@RequestParam MultipartFile file){
+        return response("Upload file successfully!",HttpStatus.CREATED,fileService.fileUpload(file));
     }
 
     @GetMapping("/preview-file/{file-name}")

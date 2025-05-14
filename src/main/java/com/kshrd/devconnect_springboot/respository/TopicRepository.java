@@ -1,6 +1,7 @@
 package com.kshrd.devconnect_springboot.respository;
 
 import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
+import com.kshrd.devconnect_springboot.model.entity.Skill;
 import com.kshrd.devconnect_springboot.model.entity.Topic;
 import org.apache.ibatis.annotations.*;
 
@@ -12,30 +13,22 @@ public interface TopicRepository {
  
     // GET Topic BY ID
     @Select("""
-        SELECT 
-            t.topic_id,
-            t.content AS topic_content,
-            t.created_at AS topic_posted_at,
-            t.creator_id AS topic_creator_id,
-            c.comment_id,
-            c.text AS comment_content,
-            c.created_at AS comment_posted_at,
-            c.total_upvotes,
-            c.user_id AS comment_creator_id
-        FROM topics t
-        LEFT JOIN comments c ON t.topic_id = c.topic_id
-        WHERE t.topic_id = #{topicId}
-""")
+        SELECT * FROM topics
+        WHERE topic_id = #{topicId}
+    """)
     @Results(id = "BaseResultMap", value = {
             @Result(property = "topicId", column = "topic_id"),
+            @Result(property = "title", column = "title"),
             @Result(property = "content", column = "content"),
             @Result(property = "postedAt", column = "created_at"),
-            @Result(property = "creator", column = "creator_id" ,
+            @Result(property = "skills", column = "topic_id",
+                    many = @Many(select = "com.kshrd.devconnect_springboot.respository.TopicRepository.getSkillByTopicId")),
+            @Result(property = "creator", column = "user_id" ,
                     one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
             @Result(property = "comments", column = "topic_id",
                     many = @Many(select = "com.kshrd.devconnect_springboot.respository.CommentRepository.selectCommentsByTopicId"))
     })
-    Topic selectTopicsById(@Param("id") UUID id);
+    Topic selectTopicsById(UUID topicId);
     
     // DELETE Topic
     @Select("""
@@ -50,9 +43,10 @@ public interface TopicRepository {
     // INSERT Topic
     @Select("""
         INSERT INTO topics
-        (content, created_at, creator_id)
+        (title, content, created_at, user_id)
         VALUES
         (
+            #{topics.title},
             #{topics.content},
             #{topics.postedAt},
             #{creatorId}
@@ -67,9 +61,10 @@ public interface TopicRepository {
     @Select("""
     UPDATE topics
     SET
+        title = #{topics.title},
          content = #{topics.content},
          created_at = #{topics.postedAt},
-         creator_id = #{creatorId}
+         user_id = #{creatorId}
     WHERE topic_id = #{id}
     RETURNING *;
     """)
@@ -78,11 +73,25 @@ public interface TopicRepository {
     Topic updateTopics(UUID id , @Param("topics") TopicRequest entity , UUID creatorId);
     
     // GET ALL Topic
-        
     @Select("""
         SELECT * FROM topics
     """)
     @ResultMap("BaseResultMap")
-    
     List<Topic> getAllTopics();
+
+    // ADD SKILL TO TOPIC
+    @Insert("""
+        INSERT INTO topic_skill (topic_id, skill_id)
+        VALUES (#{topicId}, #{skillId})
+    """)
+    void insertSkillToTopic(@Param("topicId") UUID topicId, @Param("skillId") UUID skillId);
+
+    // GET SKILL BY TOPIC ID
+    @Select("""
+        SELECT s.skill_name
+        FROM skills s
+        JOIN topic_skill ts ON s.skill_id = ts.skill_id
+        WHERE ts.topic_id = #{topicId}
+    """)
+    List<String> getSkillByTopicId(UUID topicId);
 }

@@ -1,6 +1,6 @@
 package com.kshrd.devconnect_springboot.model.entity;
 
-import com.kshrd.devconnect_springboot.model.templeJsonb.resumeinfomation.ResumeInformation;
+import com.kshrd.devconnect_springboot.model.templeJsonb.resumeInfomation.ResumeInformation;
 import lombok.*;
 import java.util.Date;
 import java.util.UUID;

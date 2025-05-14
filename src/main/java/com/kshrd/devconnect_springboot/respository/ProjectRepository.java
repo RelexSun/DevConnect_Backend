@@ -1,10 +1,10 @@
 package com.kshrd.devconnect_springboot.respository;
-import com.kshrd.devconnect_springboot.config.UuidTypeHandler;
-import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
-import com.kshrd.devconnect_springboot.model.entity.Project;
-import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.type.JdbcType;
 
+import com.kshrd.devconnect_springboot.model.dto.request.ProjectRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.ProjectResponse;
+import com.kshrd.devconnect_springboot.model.entity.Project;
+import com.kshrd.devconnect_springboot.utils.SqlQueryProvider;
+import org.apache.ibatis.annotations.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,41 +14,36 @@ public interface ProjectRepository {
             @Result(property = "projectId", column = "project_id"),
             @Result(property = "isOpen", column = "is_open"),
             @Result(property = "createdAt", column = "created_at"),
-            @Result(property = "ownerId", column = "owner_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
+            @Result(property = "owner", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserResponseById")),
             @Result(property = "skills", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectSkillRepository.getSkillByProjectId")),
-            @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById"))
+            @Result(property = "positions", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.ProjectPositionRepository.getAllProjectPositionById")),
+            @Result(property = "joinProjects", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectId"))
     })
-    @Select("""
-        SELECT * FROM projects
-        OFFSET #{page} LIMIT #{size};
-    """)
-    List<Project> getAllProject(Integer page, Integer size);
+    @SelectProvider(type = SqlQueryProvider.class, method = "getAllProject")
+    List<Project> getAllProject(Integer page, Integer size, String name, UUID skill);
 
     @ResultMap("projectMapper")
     @Select("""
         SELECT * FROM projects WHERE project_id = #{projectId}
     """)
-    Project getProjectById(UUID projectId);
+    Project getProjectById( UUID projectId);
+
+    @ResultMap("projectMapper")
+    @SelectProvider(type = SqlQueryProvider.class, method = "getAllProjectByUser")
+    List<Project> getAllProjectByUser(UUID userId, Integer page, Integer size, String name, UUID skill);
 
     @ResultMap("projectMapper")
     @Select("""
-        SELECT * FROM projects WHERE owner_id = #{ownerId}
-        OFFSET #{page} LIMIT #{size};
+        SELECT * FROM projects WHERE user_id = #{userId} AND project_id = #{projectId}
     """)
-    List<Project> getAllProjectByUser(UUID ownerId, Integer page, Integer size);
+    Project getProjectByIdAndUser(UUID userId, UUID projectId);
 
     @ResultMap("projectMapper")
     @Select("""
-        SELECT * FROM projects WHERE owner_id = #{ownerId} AND project_id = #{projectId}
-    """)
-    Project getProjectByIdAndUser(UUID ownerId, UUID projectId);
-
-    @ResultMap("projectMapper")
-    @Select("""
-        INSERT INTO projects VALUES (DEFAULT, #{req.title}, #{req.description}, #{req.isOpen}, DEFAULT, #{ownerId})
+        INSERT INTO projects VALUES (DEFAULT, #{req.title}, #{req.description}, #{req.isOpen}, DEFAULT, #{userId})
         RETURNING *;
     """)
-    Project createProjectByUser(UUID ownerId, @Param("req") ProjectRequest request);
+    Project createProjectByUser(UUID userId, @Param("req") ProjectRequest request);
 
     @ResultMap("projectMapper")
     @Select("""
@@ -58,7 +53,13 @@ public interface ProjectRepository {
     Project updateProject(UUID projectId, @Param("req") ProjectRequest request);
 
     @Delete("""
-        DELETE FROM projects WHERE project_id = #{projectId}
+        DELETE FROM projects WHERE project_id = #{projectId} AND user_id = #{userId}
     """)
-    void deleteProject(UUID projectId);
+    void deleteProject(UUID userId, UUID projectId);
+
+    @Update("""
+        UPDATE projects SET is_open = #{status} WHERE project_id = #{projectId} AND user_id = #{ownerId}
+        RETURNING *;
+    """)
+    Project updateProjectStatus(Boolean status, UUID projectId, UUID ownerId);
 }

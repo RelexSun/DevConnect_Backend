@@ -24,7 +24,6 @@ public class UpvoteServiceImplementation implements UpvoteService {
                 .userId(CurrentUser.appUserId)
                 .build();
         Upvote inserted = repository.insertUpvote(upvote);
-
         Integer total = repository.countUpvote(commentId);
         commentsRepository.addUpvote(commentId , total);
         return inserted;

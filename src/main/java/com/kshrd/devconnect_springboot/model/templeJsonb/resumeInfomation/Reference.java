@@ -1,4 +1,4 @@
-package com.kshrd.devconnect_springboot.model.templeJsonb.resumeinfomation;
+package com.kshrd.devconnect_springboot.model.templeJsonb.resumeInfomation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
