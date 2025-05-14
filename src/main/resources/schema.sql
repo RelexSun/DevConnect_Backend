@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS recruiter_profiles (
     recruiter_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     company_name VARCHAR(100),
     gender VARCHAR(10),
+    phone_number VARCHAR(10),
     industry VARCHAR(100),
     company_location VARCHAR(200),
     bio VARCHAR(100),
