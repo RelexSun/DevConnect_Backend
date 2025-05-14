@@ -6,6 +6,7 @@ import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.model.dto.request.CommentRequest;
 import com.kshrd.devconnect_springboot.model.entity.Comment;
 import com.kshrd.devconnect_springboot.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,30 +25,19 @@ public class CommentsController extends BaseController {
 
     private final CommentService commentsService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<Comment>>>  getAllComments(@RequestParam(defaultValue = "1") Integer page,
-                                                             @RequestParam(defaultValue = "10") Integer size) {
-        return response("Comments retrieved successfully", commentsService.getAllComments(page, size));
-    }
-
-    @GetMapping("topicId/{topicId}")
-    public ResponseEntity<ApiResponse<Comment>> getCommentsById(@PathVariable UUID topicId) {
-        return response("Comments retrieved by id successfully", commentsService.getCommentsById(topicId));
-    }
-
-    @PostMapping("topic/{topicId}")
+    @PostMapping("/{topicId}")
     public ResponseEntity<ApiResponse<Comment>> createComments(@RequestBody CommentRequest entity , @PathVariable UUID topicId) {
         return response("Comment have been created successfully", HttpStatus.CREATED, commentsService.createComments(entity, topicId));
     }
 
-    @PutMapping("comment/{commentId}")
+    @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Comment>> updateComments(@PathVariable UUID commentId, @RequestBody CommentRequest entity) {
          return response("Comment have been updated successfully", commentsService.updateComments(commentId,entity));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteComments(@PathVariable UUID id) {
-        commentsService.deleteComments(id);
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponse<Object>> deleteComments(@PathVariable UUID commentId) {
+        commentsService.deleteComments(commentId);
         return response("Comment have been deleted successfully");
     }
 

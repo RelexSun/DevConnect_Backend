@@ -28,9 +28,9 @@ public class JoinJobController  extends BaseController {
         return response("Join job retrieved successfully", joinJobService.getAllJoinJob());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<JoinJobResponse>> getJoinJobById(@PathVariable UUID id) {
-        return response("Join job retrieved by id successfully", joinJobService.getJoinJobById(id));
+    @GetMapping("/{joinId}")
+    public ResponseEntity<ApiResponse<JoinJobResponse>> getJoinJobById(@PathVariable UUID joinId) {
+        return response("Join job retrieved by id successfully", joinJobService.getJoinJobById(joinId));
     }
 
     @PostMapping
@@ -38,9 +38,9 @@ public class JoinJobController  extends BaseController {
         return response("Join job have been created successfully", HttpStatus.CREATED, joinJobService.createJoinJob(entity , id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<JoinJobResponse>> deleteJoinJob(@PathVariable UUID id) {
-        return response("Join job have been deleted successfully", joinJobService.deleteJoinJob(id));
+    @DeleteMapping("/{joinId}")
+    public ResponseEntity<ApiResponse<JoinJobResponse>> deleteJoinJob(@PathVariable UUID joinId) {
+        return response("Join job have been deleted successfully", joinJobService.deleteJoinJob(joinId));
     }
 
     @PutMapping("/{joinId}")
