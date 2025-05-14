@@ -1,12 +1,16 @@
 package com.kshrd.devconnect_springboot.service.implementation;
 
 
+import com.kshrd.devconnect_springboot.exception.BadRequestException;
+import com.kshrd.devconnect_springboot.model.entity.Comment;
 import com.kshrd.devconnect_springboot.model.entity.Upvote;
 import com.kshrd.devconnect_springboot.respository.CommentRepository;
 import com.kshrd.devconnect_springboot.respository.UpvoteRepository;
 import com.kshrd.devconnect_springboot.service.UpvoteService;
 import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -23,10 +27,16 @@ public class UpvoteServiceImplementation implements UpvoteService {
                 .commentId(commentId)
                 .userId(CurrentUser.appUserId)
                 .build();
-        Upvote inserted = repository.insertUpvote(upvote);
-        Integer total = repository.countUpvote(commentId);
-        commentsRepository.addUpvote(commentId , total);
-        return inserted;
+        try{
+            Upvote inserted = repository.insertUpvote(upvote);
+            Integer total = repository.countUpvote(commentId);
+            commentsRepository.addUpvote(commentId , total);
+            return inserted;
+        }catch (DuplicateKeyException e){
+            throw new BadRequestException("You have already upvoted this comment");
+        }catch (DataIntegrityViolationException e ){
+            throw new BadRequestException("Comment not found");
+        }
     }
     @Override
     public Upvote deleteUpvote(UUID commentId) {
@@ -34,6 +44,10 @@ public class UpvoteServiceImplementation implements UpvoteService {
                 .commentId(commentId)
                 .userId(CurrentUser.appUserId)
                 .build();
+        Upvote deleted = repository.deleteUpvote(upvote);
+        Comment comment= commentsRepository.selectCommentsById(commentId);
+        if (comment == null) throw new BadRequestException("comment not found!");
+        if (deleted == null) throw new BadRequestException("this comment is not upvoted yet");
         Upvote deleteUpvote = repository.deleteUpvote(upvote);
         Integer total = repository.countUpvote(commentId);
         commentsRepository.addUpvote( commentId , total);

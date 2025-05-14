@@ -4,6 +4,7 @@ package com.kshrd.devconnect_springboot.controller;
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.TopicResponse;
 import com.kshrd.devconnect_springboot.model.entity.Topic;
 import com.kshrd.devconnect_springboot.service.TopicService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,13 +26,13 @@ public class TopicController extends BaseController {
     private final TopicService topicsService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Topic>>> getAllTopics() {
+    public ResponseEntity<ApiResponse<List<TopicResponse>>> getAllTopics() {
         return response("Topics retrieved successfully",topicsService.getAllTopics());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Topic>> getTopicsById(@PathVariable UUID id) {
-        return response("Topics retrieved by id successfully", topicsService.getTopicsById(id));
+    @GetMapping("/{TopicId}")
+    public ResponseEntity<ApiResponse<Topic>> getTopicsById(@PathVariable UUID TopicId) {
+        return response("Topics retrieved by id successfully", topicsService.getTopicsById(TopicId));
     }
 
     @PostMapping
@@ -39,14 +40,14 @@ public class TopicController extends BaseController {
         return response("Topics have been created successfully", HttpStatus.CREATED, topicsService.createTopics(entity));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Topic>> updateTopics(@PathVariable UUID id, @RequestBody TopicRequest entity) {
-        return response("Topics have been updated successfully", topicsService.updateTopics(id,entity));
+    @PutMapping("/{TopicId}")
+    public ResponseEntity<ApiResponse<Topic>> updateTopics(@PathVariable UUID TopicId, @RequestBody TopicRequest entity) {
+        return response("Topics have been updated successfully", topicsService.updateTopics(TopicId,entity));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteTopics(@PathVariable UUID id) {
-        topicsService.deleteTopics(id);
+    @DeleteMapping("/{TopicId}")
+    public ResponseEntity<ApiResponse<Object>> deleteTopics(@PathVariable UUID TopicId) {
+        topicsService.deleteTopics(TopicId);
         return response("Topics have been deleted successfully");
 
     }

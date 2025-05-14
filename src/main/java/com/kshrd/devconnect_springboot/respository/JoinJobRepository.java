@@ -21,7 +21,7 @@ public interface JoinJobRepository {
             @Result(property = "description", column = "description"),
             @Result(property = "developer", column = "user_id" , one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),
     })
-    JoinJobResponse selectJoinJobById(@Param("id") UUID id);
+    JoinJob selectJoinJobById(@Param("id") UUID id);
     
     // DELETE JoinJob
     @Select("""
@@ -31,7 +31,7 @@ public interface JoinJobRepository {
         RETURNING *
         """)
         @ResultMap("BaseResultMap")
-    JoinJobResponse deleteJoinJob(UUID joinJobId);
+    JoinJob deleteJoinJob(UUID joinJobId);
 
     // INSERT JoinJob
     @Select("""
@@ -48,7 +48,7 @@ public interface JoinJobRepository {
         RETURNING *;
         """)
         @ResultMap("BaseResultMap")
-    JoinJobResponse insertJoinJob(@Param("joinJob") JoinJobRequest entity , String cv , UUID developerId , @Param("jobId") UUID jobId);
+    JoinJob insertJoinJob(@Param("joinJob") JoinJobRequest entity , String cv , UUID developerId , @Param("jobId") UUID jobId);
 
     // GET ALL JoinJob
     @Select("""
@@ -56,7 +56,7 @@ public interface JoinJobRepository {
         where user_id = #{developerId}
     """)
     @ResultMap("BaseResultMap")
-    List<JoinJobResponse> getAllJoinJob(UUID developerId);
+    List<JoinJob> getAllJoinJob(UUID developerId);
 
     // UPDATE IS APPROVE
     @Select("""
@@ -66,7 +66,7 @@ public interface JoinJobRepository {
         RETURNING *
     """)
     @ResultMap("BaseResultMap")
-    JoinJobResponse updateIsApprove(@Param("isApprove") Boolean isApprove , @Param("joinJobId") UUID joinJobId);
+    JoinJob updateIsApprove(@Param("isApprove") Boolean isApprove , @Param("joinJobId") UUID joinJobId);
 
     // GET ALL JOIN JOB BY STATUS
     @Select("""
@@ -74,5 +74,5 @@ public interface JoinJobRepository {
         where is_approve = #{isApprove}
     """)
     @ResultMap("BaseResultMap")
-    List<JoinJobResponse> getAllJoinJobByStatus(@Param("isApprove") Boolean isApprove);
+    List<JoinJob> getAllJoinJobByStatus(@Param("isApprove") Boolean isApprove);
 }
