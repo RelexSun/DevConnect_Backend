@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProjectService {
-    List<ProjectResponse> getAllProject(Integer page, Integer size);
+    List<ProjectResponse> getAllProject(Integer page, Integer size, String name, UUID skill);
     Project getProjectById(UUID projectId);
-    List<ProjectResponse> getAllProjectByUser(Integer page, Integer size);
+    List<ProjectResponse> getAllProjectByUser(Integer page, Integer size, String name, UUID skill);
     Project getProjectByIdAndUser(UUID projectId);
     Project createProject(ProjectRequest projectRequest);
     Project updateProject(UUID projectId, ProjectRequest projectRequest);
