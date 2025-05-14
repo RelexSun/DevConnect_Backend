@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS topics (
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
 
+
 -- comments
 CREATE TABLE IF NOT EXISTS comments (
     comment_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

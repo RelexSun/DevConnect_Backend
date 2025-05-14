@@ -39,4 +39,9 @@ public interface AuthRepository {
     """)
     AppUser getUserByEmail(String email);
 
+    @ResultMap("authMapper")
+    @Select("""
+        SELECT * FROM app_users WHERE user_id = #{userId}
+    """)
+    AppUser getUserById(UUID userId);
 }
