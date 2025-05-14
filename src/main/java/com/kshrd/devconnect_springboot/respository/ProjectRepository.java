@@ -20,7 +20,7 @@ public interface ProjectRepository {
             @Result(property = "joinProjects", column = "project_id", many = @Many(select = "com.kshrd.devconnect_springboot.respository.JoinProjectRepository.getAllJoinProjectByProjectId"))
     })
     @SelectProvider(type = SqlQueryProvider.class, method = "getAllProject")
-    List<Project> getAllProject(Integer page, Integer size);
+    List<Project> getAllProject(Integer page, Integer size, String name, UUID skill);
 
     @ResultMap("projectMapper")
     @Select("""
@@ -29,11 +29,8 @@ public interface ProjectRepository {
     Project getProjectById( UUID projectId);
 
     @ResultMap("projectMapper")
-    @Select("""
-        SELECT * FROM projects WHERE user_id = #{userId}
-        OFFSET #{page} LIMIT #{size};
-    """)
-    List<Project> getAllProjectByUser(UUID userId, Integer page, Integer size);
+    @SelectProvider(type = SqlQueryProvider.class, method = "getAllProjectByUser")
+    List<Project> getAllProjectByUser(UUID userId, Integer page, Integer size, String name, UUID skill);
 
     @ResultMap("projectMapper")
     @Select("""
