@@ -31,10 +31,9 @@ public class JobsController extends BaseController {
         return response("Jobs retrieved successfully",jobsService.getAllJobs(page, size));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Jobs>> getJobsById(@PathVariable UUID id) {
-        Jobs entity = jobsService.getJobsById(id);
-        return response("Jobs retrieved by id successfully",jobsService.getJobsById(id));
+    @GetMapping("/{JobId}")
+    public ResponseEntity<ApiResponse<Jobs>> getJobsById(@PathVariable UUID JobId) {
+        return response("Jobs retrieved by id successfully",jobsService.getJobsById(JobId));
     }
 
     @PostMapping
@@ -42,21 +41,21 @@ public class JobsController extends BaseController {
         return response("Jobs have been created successfully", HttpStatus.CREATED, jobsService.createJobs(entity));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Jobs>> updateJobs(@PathVariable UUID id, @RequestBody JobsRequest entity) {
-        return response("Jobs have been updated successfully", jobsService.updateJobs(id , entity));
+    @PutMapping("/{JobId}")
+    public ResponseEntity<ApiResponse<Jobs>> updateJobs(@PathVariable UUID JobId, @RequestBody JobsRequest entity) {
+        return response("Jobs have been updated successfully", jobsService.updateJobs(JobId , entity));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Jobs>> deleteJobs(@PathVariable UUID id) {
-        return response("Jobs have been deleted successfully", jobsService.deleteJobs(id));
+    @DeleteMapping("/{JobId}")
+    public ResponseEntity<ApiResponse<Jobs>> deleteJobs(@PathVariable UUID JobId) {
+        return response("Jobs have been deleted successfully", jobsService.deleteJobs(JobId));
     }
 
-    @PutMapping("update/status/{id}")
-    public ResponseEntity<ApiResponse<Jobs>> updateStatusJobs(@PathVariable UUID id, @RequestParam Boolean status) {
-        return response("Jobs have been updated successfully", jobsService.updateStatusJobs(id , status));
+    @PutMapping("/job-status/{JobId}")
+    public ResponseEntity<ApiResponse<Jobs>> updateStatusJobs(@PathVariable UUID JobId, @RequestParam Boolean status) {
+        return response("Jobs have been updated successfully", jobsService.updateStatusJobs(JobId , status));
     }
-    @GetMapping("/get-jobs-by-creator")
+    @GetMapping("/my-all-job")
     public ResponseEntity<ApiResponse<List<Jobs>>> getAllJobsByCreatorId() {
         return response("Jobs retrieved by creator id successfully",jobsService.getAllJobsByCreatorId());
     }
