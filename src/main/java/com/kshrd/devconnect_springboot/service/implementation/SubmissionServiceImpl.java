@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +31,6 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String PISTON_URL = "https://emkc.org/api/v2/piston/execute";
 
-
     public Submission getSubmissionByDevId(UUID id) {
         return submissionRepository.selectSubmissionById(id);
     }
@@ -43,7 +39,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         return submissionRepository.getAllSubmission();
     }
 
-    public void createSubmission(UUID challengeId, Long timeSubmitted , Integer score) {
+    public void createSubmission(UUID challengeId, Long timeSubmitted, Integer score) {
         SubmissionRequest entity = new SubmissionRequest();
         entity.setChallengeId(challengeId);
         entity.setDeveloperId(CurrentUser.appUserId);
@@ -53,14 +49,14 @@ public class SubmissionServiceImpl implements SubmissionService {
         submissionRepository.insertSubmission(entity);
     }
 
-    public String evaluateStudentCode(String studentCode, UUID codeId) throws JsonProcessingException {
+    @Override
+    public List<String> evaluateStudentCode(String studentCode, UUID codeId) throws JsonProcessingException {
         var challenge = codingChallengeRepository.getCodeChallengeById(codeId);
         var testCases = challenge.getTestCase();
+        List<String> results = new ArrayList<>();
 
-        // Extract header and function name
         CodeGenerator.ExtractedFunction extracted = CodeGenerator.extractParts(challenge.getStarterCode(), challenge.getLanguage());
 
-        // Generate full code with student logic and test runner
         String fullCode = CodeGenerator.generate(
                 challenge.getLanguage(),
                 extracted.header,
@@ -68,15 +64,13 @@ public class SubmissionServiceImpl implements SubmissionService {
                 extracted.fnName,
                 testCases
         );
-        System.out.println("Full code to be executed: " + fullCode);
+        System.out.println("Full Code: " + fullCode);
 
-        // Prepare Piston API request
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
         Map<String, Object> requestBody = new HashMap<>();
-
         requestBody.put("language", challenge.getLanguage());
         requestBody.put("version", VersionLanguage.getVersion(challenge.getLanguage()));
         requestBody.put("files", List.of(Map.of("content", fullCode)));
@@ -85,7 +79,8 @@ public class SubmissionServiceImpl implements SubmissionService {
         String response = restTemplate.postForObject(PISTON_URL, requestEntity, String.class);
 
         if (response == null) {
-            throw new RuntimeException("No response from Piston API.");
+            results.add("No response from Piston API.");
+            return results;
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -93,7 +88,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         String stderr = root.path("run").path("stderr").asText().trim();
         if (!stderr.isEmpty()) {
-            return "Compilation/Runtime Error:\n" + stderr;
+            results.add("Compilation/Runtime Error:\n" + stderr);
+            return results;
         }
 
         String output = root.path("run").path("output").asText().trim();
@@ -105,25 +101,39 @@ public class SubmissionServiceImpl implements SubmissionService {
         String[] outputs = output.split("\\r?\\n");
 
         if (outputs.length != expectedOutputList.size()) {
-            return "Mismatch in output count. Got: " + outputs.length + ", Expected: " + expectedOutputList.size();
+            results.add("Mismatch in output count. Got: " + outputs.length + ", Expected: " + expectedOutputList.size());
+            return results;
         }
+
         for (int i = 0; i < expectedOutputList.size(); i++) {
             if (!outputs[i].equals(expectedOutputList.get(i))) {
-                return "Test " + (i + 1) + " failed. Output: " + outputs[i] + ", Expected: " + expectedOutputList.get(i);
+                results.add("Test " + (i + 1) +
+                        " failed. Output: " + outputs[i] +
+                        ", Expected: " + expectedOutputList.get(i));
+            } else {
+                results.add("Test " + (i + 1) +
+                        " passed. Output: " + outputs[i] +
+                        ", Expected: " + expectedOutputList.get(i));
             }
         }
-        return "Passed";
+
+        return results;
     }
+
     @Override
-    public String submitCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException {
-        String result = evaluateStudentCode(studentCode.getCode(), codeId);
-        if ("Passed".equals(result)) {
+    public List<String> submitCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException {
+        List<String> results = evaluateStudentCode(studentCode.getCode(), codeId);
+        boolean allPassed = results.stream().allMatch(result -> result.contains("passed"));
+
+        if (allPassed) {
             createSubmission(codeId, studentCode.getTimeSubmitted(), 100);
         }
-        return result;
+
+        return results;
     }
+
     @Override
-    public String testStudentCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException {
+    public List<String> testStudentCode(SubmitCodeRequest studentCode, UUID codeId) throws JsonProcessingException {
         return evaluateStudentCode(studentCode.getCode(), codeId);
     }
 }
