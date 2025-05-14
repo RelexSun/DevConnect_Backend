@@ -2,7 +2,9 @@ package com.kshrd.devconnect_springboot.service.implementation;
 
 
 import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.TopicResponse;
 import com.kshrd.devconnect_springboot.model.entity.Topic;
+import com.kshrd.devconnect_springboot.model.mapper.TopicMapper;
 import com.kshrd.devconnect_springboot.respository.SkillRepository;
 import com.kshrd.devconnect_springboot.respository.TopicRepository;
 import com.kshrd.devconnect_springboot.service.TopicService;
@@ -17,6 +19,7 @@ import java.util.*;
 public class TopicServiceImplementation implements TopicService {
     private final TopicRepository repository;
     private final SkillRepository skillRepository;
+    private final TopicMapper topicMapper;
 
     @Override
     public Topic getTopicsById(UUID id) {
@@ -24,8 +27,8 @@ public class TopicServiceImplementation implements TopicService {
     }
 
     @Override
-    public List<Topic> getAllTopics() {
-        return repository.getAllTopics();
+    public List<TopicResponse> getAllTopics() {
+        return topicMapper.toShowInCard(repository.getAllTopics());
     }
 
     @Override

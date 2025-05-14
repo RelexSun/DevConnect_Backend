@@ -33,7 +33,7 @@ public interface UpvoteRepository {
         RETURNING *;
         """)
         @ResultMap("BaseResultMap")
-   
+
     Upvote insertUpvote(@Param("upvote") Upvote entity);
 
     @Select("""
