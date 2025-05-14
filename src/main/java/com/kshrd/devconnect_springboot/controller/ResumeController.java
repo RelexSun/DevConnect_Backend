@@ -15,29 +15,26 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/resumes")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class ResumeController extends BaseController {
     private final ResumeService resumesService;
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<Resume>>> getAllResumes() {
-        return response("Resumes retrieved successfully",resumesService.getAllResumes());
+    @GetMapping("/get-resume")
+    public ResponseEntity<ApiResponse<Resume>> getAllResumes() {
+        return response("Resumes retrieved successfully",resumesService.selectCurrentResumes());
         }
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Resume>> getResumesById(@PathVariable UUID id) {
-        return response("Resumes retrieved by id successfully",resumesService.getResumesById(id));
-    }
-    @PostMapping
+
+    @PostMapping("/create-resume")
     public ResponseEntity<ApiResponse<Resume>> createResumes(@RequestBody ResumeRequest entity) {
         return response("Resumes created successfully", HttpStatus.CREATED, resumesService.createResumes(entity));
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Resume>> updateResumes(@PathVariable UUID id, @RequestBody ResumeRequest entity) {
-        return response("Resumes updated successfully",resumesService.updateResumes(id, entity));
+    @PutMapping("/update-resume")
+    public ResponseEntity<ApiResponse<Resume>> updateResumes(@RequestBody ResumeRequest entity) {
+        return response("Resumes updated successfully",resumesService.updateResumes(entity));
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Resume>> deleteResumes(@PathVariable UUID id) {
-        return response("Resumes deleted successfully", resumesService.deleteResumes(id));
+    @DeleteMapping("/delete-resume")
+    public ResponseEntity<ApiResponse<Resume>> deleteResumes() {
+        return response("Resumes deleted successfully", resumesService.deleteResumes());
     }
 }
