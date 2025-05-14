@@ -22,7 +22,7 @@ public interface HackathonService {
 
     List<Hackathon> getAllHackathonsByCurrentUser();
 
-    Object joinHackathon(UUID hackathonId);
+    void joinHackathon(UUID hackathonId);
 
     void submitHackathon(UUID hackathonId, SubmitHackathonRequest request);
 

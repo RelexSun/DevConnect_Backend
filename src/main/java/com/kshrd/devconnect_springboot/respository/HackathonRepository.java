@@ -18,7 +18,7 @@ public interface HackathonRepository {
             @Result(property = "endDate", column = "finished_at"),
             @Result(property = "createdDate", column = "created_at"),
             @Result(property = "isAvailable", column = "is_available"),
-            @Result(property = "creatorId", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserById")),    //Recruiter Id
+            @Result(property = "creatorId", column = "user_id", one = @One(select = "com.kshrd.devconnect_springboot.respository.AppUserRepository.getUserResponseById")),    //Recruiter Id
             @Result(property = "fullScores", column = "full_scores"),
             @Result(property = "developerId", column = "developer_id")
     })
@@ -88,7 +88,7 @@ public interface HackathonRepository {
             INSERT INTO join_hackathons (hackathon_id, user_id)
             VALUES ( #{hackathonId}, #{userId});
             """)
-    Object joinHackathon(@Param("hackathonId") UUID hackathonId, @Param("userId") UUID userId);
+    void joinHackathon(@Param("hackathonId") UUID hackathonId, @Param("userId") UUID userId);
 
     @Update("""
                 UPDATE join_hackathons

@@ -1,7 +1,6 @@
 package com.kshrd.devconnect_springboot.service.implementation;
 
 import com.kshrd.devconnect_springboot.exception.NotFoundException;
-import com.kshrd.devconnect_springboot.model.dto.request.AppUserRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.EvaluateDeveloperRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.HackathonRequest;
 import com.kshrd.devconnect_springboot.model.dto.request.SubmitHackathonRequest;
@@ -83,8 +82,8 @@ public class HackathonServiceImplement implements HackathonService {
     }
 
     @Override
-    public Object joinHackathon(UUID hackathonId) {
-        return hackathonRepository.joinHackathon(hackathonId, CurrentUser.appUserId);
+    public void joinHackathon(UUID hackathonId) {
+        hackathonRepository.joinHackathon(hackathonId, CurrentUser.appUserId);
     }
 
     @Override
@@ -117,14 +116,14 @@ public class HackathonServiceImplement implements HackathonService {
                         hackathonId,
                         request.getUserId()
                 );
+                // Step 6: Get the user's email using their userId
+                AppUser appUser = authRepository.getUserById(request.getUserId());
+                if (appUser != null && appUser.getEmail() != null && !appUser.getEmail().isEmpty()) {
+                    String certificateDetails = "You have earned a Certificate of Achievement for your performance in the Hackathon!";
+                    emailSenderService.sendEmail(appUser.getEmail(), certificateDetails);
+                }
             }
-            // Step 6: Get the user's email using their userId
-            AppUser appUser = authRepository.getUserById(request.getUserId());
-            if (appUser != null && appUser.getEmail() != null && !appUser.getEmail().isEmpty()) {
-                String certificateDetails = "You have earned a Certificate of Achievement for your performance in the Hackathon!";
-                emailSenderService.sendEmail(appUser.getEmail(), certificateDetails);
-                redisTemplate.opsForValue().set(appUser.getEmail(), certificateDetails, Duration.ofMinutes(2));
-            }
+
         }
     }
     private void validateHackathonDates(LocalDateTime startDate, LocalDateTime endDate) {

@@ -1,7 +1,7 @@
 package com.kshrd.devconnect_springboot.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kshrd.devconnect_springboot.model.dto.response.AppUserResponse;
+import com.kshrd.devconnect_springboot.model.dto.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,5 +27,5 @@ public class Hackathon {
     private LocalDateTime createdDate = LocalDateTime.now();
     private Boolean isAvailable;
     private Integer fullScores;
-    private AppUserResponse creatorId;
+    private UserResponse creatorId;
 }

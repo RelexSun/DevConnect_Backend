@@ -63,24 +63,24 @@ public class HackathonController extends BaseController {
         return response("You Deleted a hackathon with ID << " + hackathonId + " >> successfully");
     }
 
-    // join hackathon: required(hackathon_id, developer_id, joined_at: now()) insert the requirement to table join_hackathon and the score and the submission is null;
     @PostMapping("/join_hackathon")
     @Operation(summary = "Join hackathon")
     public ResponseEntity<ApiResponse<Object>> joinHackathon(@RequestParam UUID hackathonId) {
-        return response("You joined a hackathon", HttpStatus.CREATED, hackathonService.joinHackathon(hackathonId));
+        hackathonService.joinHackathon(hackathonId);
+        return response("You joined a hackathon");
     }
 
-    //* Submit hackathon : when submit required(hackathon_id, developer_id, submission) update table join_hackathon column submission from null to value in submission
     @PutMapping("/submit_hackathon/{hackathon_id}")
     @Operation(summary = "Submit hackathon")
-    public ResponseEntity<ApiResponse> submitHackathon(@PathVariable("hackathon_id") UUID hackathonId, @RequestBody SubmitHackathonRequest request) {
-        return response("You submitted successfully", HttpStatus.CREATED, hackathonService.submitHackathon(hackathonId, request));
+    public ResponseEntity<ApiResponse<Object>> submitHackathon(@PathVariable("hackathon_id") UUID hackathonId, @RequestBody SubmitHackathonRequest request) {
+        hackathonService.submitHackathon(hackathonId, request);
+        return response("You submitted successfully");
     }
 
-    //* Evaluate developer's score required(hackathon_id, developer_id, scores) update table join_hackathon column score from null to value that recruiter evaluated, insert certificate
     @PutMapping("/evaluate_developer/{hackathon_id}")
     @Operation(summary = "Evaluate joined developer")
-    public ResponseEntity<ApiResponse> evaluateDeveloper(@PathVariable("hackathon_id") UUID hackathonId,  @RequestBody EvaluateDeveloperRequest request) {
-        return response("Developer evaluation completed successfully", HttpStatus.CREATED, hackathonService.evaluateDeveloper(hackathonId, request));
+    public ResponseEntity<ApiResponse<Object>> evaluateDeveloper(@PathVariable("hackathon_id") UUID hackathonId,  @RequestBody EvaluateDeveloperRequest request) {
+        hackathonService.evaluateDeveloper(hackathonId, request);
+        return response("Developer evaluation completed successfully");
     }
 }
