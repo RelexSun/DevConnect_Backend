@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ResumeService {
-    Resume getResumesById(UUID id);
-    List<Resume> getAllResumes();
+    Resume selectCurrentResumes();
     Resume createResumes(ResumeRequest entity);
-    Resume updateResumes (UUID id, ResumeRequest entity);
-    Resume deleteResumes(UUID id);
+    Resume updateResumes (ResumeRequest entity);
+    Resume deleteResumes();
 }
