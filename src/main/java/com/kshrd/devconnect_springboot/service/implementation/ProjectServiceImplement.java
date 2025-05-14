@@ -35,9 +35,9 @@ public class ProjectServiceImplement implements ProjectService {
     private final ProjectMapper projectMapper;
 
     @Override
-    public List<ProjectResponse> getAllProject(Integer page, Integer size) {
+    public List<ProjectResponse> getAllProject(Integer page, Integer size, String name, UUID skill) {
         page = (page - 1) * size;
-        return projectMapper.toDetailResponse(projectRepository.getAllProject(page, size));
+        return projectMapper.toDetailResponse(projectRepository.getAllProject(page, size, name, skill));
     }
 
     @Override
@@ -50,9 +50,9 @@ public class ProjectServiceImplement implements ProjectService {
     }
 
     @Override
-    public List<ProjectResponse> getAllProjectByUser(Integer page, Integer size) {
+    public List<ProjectResponse> getAllProjectByUser(Integer page, Integer size, String name, UUID skill) {
         page = (page - 1) * size;
-        return projectMapper.toDetailResponse(projectRepository.getAllProjectByUser(CurrentUser.appUserId, page, size));
+        return projectMapper.toDetailResponse(projectRepository.getAllProjectByUser(CurrentUser.appUserId, page, size, name, skill));
     }
 
     @Override

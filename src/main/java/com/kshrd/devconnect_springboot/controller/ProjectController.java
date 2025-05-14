@@ -32,10 +32,10 @@ public class ProjectController extends BaseController {
     @Operation(summary = "Get all projects")
     public ResponseEntity<ApiResponse<List<ProjectResponse>>> getAllProjects(@RequestParam(defaultValue = "1") Integer page,
                                                                              @RequestParam(defaultValue = "10") Integer size,
-                                                                             @RequestParam String projectName,
-                                                                             @RequestParam String skill
+                                                                             @RequestParam(required = false) String projectName,
+                                                                             @RequestParam(required = false) UUID skill
                                                        ) {
-        return response("Fetched all project successfully", projectService.getAllProject(page, size));
+        return response("Fetched all project successfully", projectService.getAllProject(page, size, projectName, skill));
     }
 
     @GetMapping("/{project-id}")
@@ -47,8 +47,10 @@ public class ProjectController extends BaseController {
     @GetMapping("/users")
     @Operation(summary = "Get all project by user")
     public ResponseEntity<ApiResponse<List<ProjectResponse>>> getAllProjectByUser(@RequestParam(defaultValue = "1") Integer page,
-                                                           @RequestParam(defaultValue = "10") Integer size) {
-        return response("Get project by id successfully", projectService.getAllProjectByUser(page, size));
+                                                           @RequestParam(defaultValue = "10") Integer size,
+                                                           @RequestParam(required = false) String projectName,
+                                                           @RequestParam(required = false) UUID skill) {
+        return response("Get project by id successfully", projectService.getAllProjectByUser(page, size, projectName, skill));
     }
 
     @GetMapping("/users/{project-id}")
