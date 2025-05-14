@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS recruiter_profiles (
     industry VARCHAR(100),
     company_location VARCHAR(200),
     bio VARCHAR(100),
-    establish_date TIMESTAMP,
+    establish_date DATE,
     cover_picture VARCHAR(255),
     user_id UUID NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE

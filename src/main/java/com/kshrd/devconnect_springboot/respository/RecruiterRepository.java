@@ -30,20 +30,21 @@ public interface RecruiterRepository {
         INSERT INTO recruiter_profiles VALUES (DEFAULT,
                                            #{req.companyName},
                                            #{req.gender},
-                                           #{req.phoneNumber},
                                            #{req.industry},
                                            #{req.companyLocation},
                                            #{req.bio},
-                                           #{req.establishDate},
                                            #{req.coverPicture},
-                                           #{userId}
+                                           #{userId},
+                                           #{req.phoneNumber},
+                                           #{req.establishDate},
     )
+        RETURNING *;
     """)
     Recruiter createRecruiterProfile(UUID userId, @Param("req") RecruiterRequest request);
 
     @ResultMap("baseMapper")
     @Select("""
-        UPDATE recruiter_profiles SET company_name =  #{req.companyName},
+        UPDATE recruiter_profiles SET company_name = #{req.companyName},
                                            gender = #{req.gender},
                                            phone_number = #{req.phoneNumber},
                                            industry = #{req.industry},
