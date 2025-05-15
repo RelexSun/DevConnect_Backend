@@ -33,9 +33,9 @@ public class JoinJobController  extends BaseController {
         return response("Join job retrieved by id successfully", joinJobService.getJoinJobById(joinId));
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<JoinJobResponse>> createJoinJob(@RequestBody JoinJobRequest entity , @RequestParam UUID id) {
-        return response("Join job have been created successfully", HttpStatus.CREATED, joinJobService.createJoinJob(entity , id));
+    @PostMapping("/{jobId}")
+    public ResponseEntity<ApiResponse<JoinJobResponse>> createJoinJob(@RequestBody JoinJobRequest entity , @PathVariable UUID jobId) {
+        return response("Join job have been created successfully", HttpStatus.CREATED, joinJobService.createJoinJob(entity , jobId));
     }
 
     @DeleteMapping("/{joinId}")
