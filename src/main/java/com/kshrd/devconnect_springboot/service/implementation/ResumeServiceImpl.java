@@ -7,7 +7,6 @@ import com.kshrd.devconnect_springboot.service.ResumeService;
 import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,13 +17,8 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Resume getResumesById(UUID id) {
-        return repository.selectResumesById(id);
-    }
-
-    @Override
-    public List<Resume> getAllResumes() {
-        return repository.selectResumesByDeveloperId(CurrentUser.appUserId);
+    public Resume selectCurrentResumes() {
+        return repository.selectCurrentResumes(CurrentUser.appUserId);
     }
 
     @Override
@@ -33,13 +27,13 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Resume updateResumes(UUID id, ResumeRequest entity) {
+    public Resume updateResumes(ResumeRequest entity) {
 
-        return repository.updateResumes(id, entity , CurrentUser.appUserId);
+        return repository.updateResumes(entity , CurrentUser.appUserId);
     }
 
     @Override
-    public Resume deleteResumes(UUID id) {
-        return repository.deleteResumes(id);
+    public Resume deleteResumes() {
+        return repository.deleteResumes(CurrentUser.appUserId);
     }
 }

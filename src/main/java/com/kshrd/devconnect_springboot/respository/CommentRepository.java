@@ -27,7 +27,7 @@ public interface CommentRepository {
             @Result(property = "replies", column = "comment_id",
                     many = @Many(select = "selectCommentsByParentId"))
     })
-    Comment selectCommentsByTopicId(@Param("id") UUID id);
+    List<Comment> selectCommentsByTopicId(@Param("id") UUID id);
     
     // DELETE Comment
     @Select("""
@@ -55,15 +55,23 @@ public interface CommentRepository {
         @ResultMap("BaseResultMap")
     Comment insertComments(@Param("comments") CommentRequest entity , UUID creatorId ,UUID topicId);
 
+    // GET Comment BY ID
+    @Select("""
+        SELECT *
+        FROM comments
+        WHERE comment_id = #{id}
+    """)
+    @ResultMap("BaseResultMap")
+    Comment selectCommentsById(@Param("id") UUID id);
     // UPDATE  Comment
     @Select("""
-    UPDATE comments
-    SET
-         text = #{comments.content},
-         created_at = #{comments.postedAt},
-         user_id = #{creatorId}
-    WHERE comment_id = #{id}
-    RETURNING *;
+        UPDATE comments
+        SET
+             text = #{comments.content},
+             created_at = #{comments.postedAt},
+             user_id = #{creatorId}
+        WHERE comment_id = #{id}
+        RETURNING *;
     """)
     @ResultMap("BaseResultMap")
 
@@ -77,35 +85,22 @@ public interface CommentRepository {
     """)
     void addUpvote(@Param("id") UUID id , @Param("totalUpvote") Integer totalUpvote);
 
-    // GET ALL Comment
-        
-    @Select("""
-        SELECT * FROM comments
-            offset #{limit} * (#{offset} - 1)
-            limit #{limit}
-    
-    """)
-    @ResultMap("BaseResultMap")
-    List<Comment> getAllComments(Integer limit , Integer offset);
-
     // INSERT REPLY Comment
-
     @Select("""
     INSERT INTO comments
-    (text, created_at, topic_id, user_id, parent_id)
-    VALUES
-    (
-        #{reply.content},
-        #{reply.postedAt},
-        (SELECT topic_id FROM comments WHERE comment_id = #{parentId}),
-        #{creatorId},
-        #{parentId}
-    )
-    RETURNING *;
-""")
-        @ResultMap("BaseResultMap")
+        (text, created_at, topic_id, user_id, parent_id)
+        VALUES
+        (
+            #{reply.content},
+            #{reply.postedAt},
+            (SELECT topic_id FROM comments WHERE comment_id = #{parentId}),
+            #{creatorId},
+            #{parentId}
+        )
+        RETURNING *;
+    """)
+    @ResultMap("BaseResultMap")
     Comment insertReplyComment(@Param("reply") CommentRequest entity, UUID creatorId , UUID parentId);
-
 
     @Select("""
         SELECT *

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AppUserRequest {
     @NotBlank
-    private String firstName;
+    private String firstName;   
 
     @NotBlank
     private String lastName;

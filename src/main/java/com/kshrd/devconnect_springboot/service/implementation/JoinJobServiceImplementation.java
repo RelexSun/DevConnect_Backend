@@ -5,6 +5,7 @@ import java.util.List;
 import com.kshrd.devconnect_springboot.exception.BadRequestException;
 import com.kshrd.devconnect_springboot.exception.NotFoundException;
 import com.kshrd.devconnect_springboot.model.dto.response.JoinJobResponse;
+import com.kshrd.devconnect_springboot.model.mapper.JoinJobMapper;
 import com.kshrd.devconnect_springboot.respository.JoinJobRepository;
 import com.kshrd.devconnect_springboot.service.AppUserService;
 import com.kshrd.devconnect_springboot.utils.CurrentUser;
@@ -19,18 +20,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JoinJobServiceImplementation implements JoinJobService {
     private final JoinJobRepository repository;
-
+    private final JoinJobMapper joinJobMapper;
     @Override
     public JoinJobResponse getJoinJobById(UUID id) {
         if (repository.selectJoinJobById(id) == null) {
             throw new NotFoundException("JoinJob not found with id: " + id);
         }
-        return repository.selectJoinJobById(id);
+        return joinJobMapper.toResponse(repository.selectJoinJobById(id));
     }
 
     @Override
     public List<JoinJobResponse> getAllJoinJob() {
-        return repository.getAllJoinJob(CurrentUser.appUserId);
+        return joinJobMapper.toResponse(repository.getAllJoinJob(CurrentUser.appUserId));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class JoinJobServiceImplementation implements JoinJobService {
         }
         // call to developer repo and get developer cv
         String cv = "img.jng";
-        return repository.insertJoinJob(entity , cv , CurrentUser.appUserId , jobId);
+        return joinJobMapper.toResponse(repository.insertJoinJob(entity , cv , CurrentUser.appUserId , jobId));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class JoinJobServiceImplementation implements JoinJobService {
          if (repository.selectJoinJobById(id) == null) {
             throw new NotFoundException("Join Job not found with id: " + id);
         }
-        return repository.deleteJoinJob(id);
+        return joinJobMapper.toResponse(repository.deleteJoinJob(id));
     }
 
     @Override
@@ -56,11 +57,11 @@ public class JoinJobServiceImplementation implements JoinJobService {
         if (repository.selectJoinJobById(joinJobId) == null) {
             throw new NotFoundException("JoinJob not found with id: " + joinJobId);
         }
-        return repository.updateIsApprove(isApprove, joinJobId);
+        return joinJobMapper.toResponse(repository.updateIsApprove(isApprove, joinJobId));
     }
 
     @Override
     public List<JoinJobResponse> getAllJoinJobByIsApprove(Boolean isApprove) {
-        return repository.getAllJoinJobByStatus(isApprove);
+        return joinJobMapper.toResponse(repository.getAllJoinJobByStatus(isApprove));
     }
 }
