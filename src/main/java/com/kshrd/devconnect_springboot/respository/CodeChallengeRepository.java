@@ -33,7 +33,7 @@ public interface CodeChallengeRepository {
     // DELETE CodeChallenge
     @Select("""
         DELETE 
-        FROM code_challenge 
+        FROM code_challenges 
         WHERE challenge_id = #{challengeId}
         RETURNING *
         """)
@@ -42,7 +42,7 @@ public interface CodeChallengeRepository {
 
     // INSERT CodeChallenge
     @Select("""
-        INSERT INTO code_challenge
+        INSERT INTO code_challenges
         (title, description, test_case, problem_detail, created_at, score, creator_id, starter_code, language)
         VALUES 
         (
@@ -63,7 +63,7 @@ public interface CodeChallengeRepository {
 
     // UPDATE  CodeChallenge
     @Select("""
-    UPDATE code_challenge
+    UPDATE code_challenges
     SET
          title = #{codeChallenge.title},
          description = #{codeChallenge.description},
@@ -82,7 +82,7 @@ public interface CodeChallengeRepository {
     // GET ALL CodeChallenge
 
     @Select("""
-        SELECT * FROM code_challenge
+        SELECT * FROM code_challenges
     """)
     @ResultMap("BaseResultMap")
 
