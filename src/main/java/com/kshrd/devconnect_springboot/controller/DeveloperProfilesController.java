@@ -3,6 +3,7 @@ package com.kshrd.devconnect_springboot.  controller;
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.model.dto.request.DeveloperProfilesRequest;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.kshrd.devconnect_springboot.service.DeveloperProfilesService;
@@ -14,20 +15,15 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/developerProfiles")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class DeveloperProfilesController extends BaseController {
 
     private final DeveloperProfilesService developerProfilesService;
-// return responseEntity("Leaderboard retrieved successfully", HttpStatus.OK, students);
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<DeveloperProfiles>>>  getAllDeveloperProfiles() {
-        List<DeveloperProfiles> entity =  developerProfilesService.getAllDeveloperProfiles();
-        return response("DeveloperProfiles retrieved successfully", entity);
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<DeveloperProfiles>> getDeveloperProfilesById(@PathVariable UUID id) {
-        DeveloperProfiles entity = developerProfilesService.getDeveloperProfilesById(id);
+    @GetMapping()
+    public ResponseEntity<ApiResponse<DeveloperProfiles>> getCurrentProfileDev() {
+        DeveloperProfiles entity = developerProfilesService.getDeveloperProfilesByCurrentUser();
         return response("DeveloperProfiles retrieved by id successfully", entity);
     }
 
@@ -37,15 +33,15 @@ public class DeveloperProfilesController extends BaseController {
         return response("DeveloperProfiles have been created successfully", service);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<DeveloperProfiles>> updateDeveloperProfiles(@PathVariable UUID id, @RequestBody DeveloperProfilesRequest entity) {
-        DeveloperProfiles updatedEntity = developerProfilesService.updateDeveloperProfiles(id,entity);
+    @PutMapping
+    public ResponseEntity<ApiResponse<DeveloperProfiles>> updateDeveloperProfiles(@RequestBody DeveloperProfilesRequest entity) {
+        DeveloperProfiles updatedEntity = developerProfilesService.updateDeveloperProfiles(entity);
         return response("DeveloperProfiles have been updated successfully", updatedEntity);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteDeveloperProfiles(@PathVariable UUID id) {
-        DeveloperProfiles entity = developerProfilesService.deleteDeveloperProfiles(id);
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void>> deleteDeveloperProfiles() {
+        DeveloperProfiles entity = developerProfilesService.deleteDeveloperProfiles();
         return response("DeveloperProfiles have been deleted successfully" , null);
     }
 

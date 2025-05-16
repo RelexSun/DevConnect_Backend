@@ -32,8 +32,8 @@ public interface CodeChallengeRepository {
 
     // DELETE CodeChallenge
     @Select("""
-        DELETE 
-        FROM code_challenges 
+        DELETE
+        FROM code_challenges
         WHERE challenge_id = #{challengeId}
         RETURNING *
         """)
@@ -43,7 +43,7 @@ public interface CodeChallengeRepository {
     // INSERT CodeChallenge
     @Select("""
         INSERT INTO code_challenges
-        (title, description, test_case, problem_detail, created_at, score, creator_id, starter_code, language)
+        (title, description, test_case, problem_detail, created_at, score, user_id, starter_code, language)
         VALUES 
         (
             #{codeChallenge.title},

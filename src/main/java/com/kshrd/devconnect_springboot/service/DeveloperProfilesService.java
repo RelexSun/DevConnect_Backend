@@ -7,9 +7,8 @@ import com.kshrd.devconnect_springboot.model.entity.DeveloperProfiles;
 import com.kshrd.devconnect_springboot.model.dto.request.DeveloperProfilesRequest;
 
 public interface DeveloperProfilesService {
-    DeveloperProfiles getDeveloperProfilesById(UUID id);
-    List<DeveloperProfiles> getAllDeveloperProfiles();
+    DeveloperProfiles getDeveloperProfilesByCurrentUser();
     DeveloperProfiles createDeveloperProfiles(DeveloperProfilesRequest entity);
-    DeveloperProfiles updateDeveloperProfiles (UUID id, DeveloperProfilesRequest entity);
-    DeveloperProfiles deleteDeveloperProfiles(UUID id);
+    DeveloperProfiles updateDeveloperProfiles (DeveloperProfilesRequest entity);
+    DeveloperProfiles deleteDeveloperProfiles();
 }

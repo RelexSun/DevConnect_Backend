@@ -21,20 +21,16 @@ public interface DeveloperProfilesRepository {
             @Result(property = "coverPicture", column = "cover_picture"),
             @Result(property = "cv", column = "cv"),
             @Result(property = "githubUsername", column = "github_username"),
-            @Result(property = "topComment", column = "top_comment"),
-            @Result(property = "mvpCount", column = "mvp_count"),
-            @Result(property = "topOneCount", column = "top_one_count"),
             @Result(property = "employeeStatus", column = "employee_status"),
             @Result(property = "jobTypeId", column = "job_type_id"),
             @Result(property = "userId", column = "user_id")
     })
-    
-    DeveloperProfiles selectDeveloperProfilesById(@Param("id") UUID id);
+    DeveloperProfiles selectDeveloperProfilesByUserId(@Param("id") UUID id);
     
     // DELETE DeveloperProfiles
     @Select("""
-        DELETE 
-        FROM developer_profiles 
+        DELETE
+        FROM developer_profiles
         WHERE developer_id = #{developerId}
         RETURNING *
         """)
@@ -43,31 +39,26 @@ public interface DeveloperProfilesRepository {
 
     // INSERT DeveloperProfiles
     @Select("""
-        INSERT INTO developer_profiles 
-        (bio, address, cover_picture, cv, github_username, top_comment, mvp_count, top_one_count, employee_status, job_type_id, user_id)
-        VALUES 
+        INSERT INTO developer_profiles
+        (bio, address, cover_picture, cv, employee_status, job_type_id, user_id)
+        VALUES
         (
-            #{developerProfiles.bio}, 
-            #{developerProfiles.address}, 
-            #{developerProfiles.coverPicture}, 
-            #{developerProfiles.cv}, 
-            #{developerProfiles.githubUsername}, 
-            #{developerProfiles.topComment}, 
-            #{developerProfiles.mvpCount}, 
-            #{developerProfiles.topOneCount}, 
-            #{developerProfiles.employeeStatus}, 
-            #{developerProfiles.jobTypeId}, 
-            #{developerProfiles.userId}
+            #{developerProfiles.bio},
+            #{developerProfiles.address},
+            #{developerProfiles.coverPicture},
+            #{developerProfiles.cv},
+            #{developerProfiles.employeeStatus},
+            #{developerProfiles.jobTypeId},
+            #{userId}
         )
         RETURNING *;
         """)
-        @ResultMap("BaseResultMap")
-   
-    DeveloperProfiles insertDeveloperProfiles(@Param("developerProfiles") DeveloperProfilesRequest entity);
+    @ResultMap("BaseResultMap")
+    DeveloperProfiles insertDeveloperProfiles(@Param("developerProfiles") DeveloperProfilesRequest entity , @Param("userId") UUID userId);
 
     // UPDATE  DeveloperProfiles
     @Select("""
-    UPDATE developer_profiles 
+    UPDATE developer_profiles
     SET
          bio = #{developerProfiles.bio},
          address = #{developerProfiles.address},
@@ -84,15 +75,5 @@ public interface DeveloperProfilesRepository {
     RETURNING *;
     """)
     @ResultMap("BaseResultMap")
-    
     DeveloperProfiles updateDeveloperProfiles(UUID id , @Param("developerProfiles") DeveloperProfilesRequest entity);
-    
-    // GET ALL DeveloperProfiles
-        
-    @Select("""
-        SELECT * FROM developer_profiles
-    """)
-    @ResultMap("BaseResultMap")
-    
-    List<DeveloperProfiles> getAllDeveloperProfiles();
 }

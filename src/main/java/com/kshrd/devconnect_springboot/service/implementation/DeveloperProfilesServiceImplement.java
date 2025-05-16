@@ -3,6 +3,7 @@ package com.kshrd.devconnect_springboot.  service.implementation;
 import java.util.List;
 
 import com.kshrd.devconnect_springboot.respository.DeveloperProfilesRepository;
+import com.kshrd.devconnect_springboot.utils.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.kshrd.devconnect_springboot.service.DeveloperProfilesService;
@@ -16,27 +17,22 @@ public class DeveloperProfilesServiceImplement implements DeveloperProfilesServi
     private final DeveloperProfilesRepository repository;
 
     @Override
-    public DeveloperProfiles getDeveloperProfilesById(UUID id) {
-        return repository.selectDeveloperProfilesById(id);
-    }
-
-    @Override
-    public List<DeveloperProfiles> getAllDeveloperProfiles() {
-        return repository.getAllDeveloperProfiles();
+    public DeveloperProfiles getDeveloperProfilesByCurrentUser() {
+        return repository.selectDeveloperProfilesByUserId(CurrentUser.appUserId);
     }
 
     @Override
     public DeveloperProfiles createDeveloperProfiles(DeveloperProfilesRequest entity) {
-        return repository.insertDeveloperProfiles(entity);
+        return repository.insertDeveloperProfiles(entity , CurrentUser.appUserId);
     }
 
     @Override
-    public DeveloperProfiles updateDeveloperProfiles(UUID id, DeveloperProfilesRequest entity) {
-        return repository.updateDeveloperProfiles(id, entity);
+    public DeveloperProfiles updateDeveloperProfiles(DeveloperProfilesRequest entity) {
+        return repository.updateDeveloperProfiles(CurrentUser.appUserId, entity );
     }
 
     @Override
-    public DeveloperProfiles deleteDeveloperProfiles(UUID id) {
-        return repository.deleteDeveloperProfiles(id);
+    public DeveloperProfiles deleteDeveloperProfiles() {
+        return repository.deleteDeveloperProfiles(CurrentUser.appUserId);
     }
 }
