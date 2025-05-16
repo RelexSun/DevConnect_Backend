@@ -24,7 +24,7 @@ public interface CodeChallengeRepository {
             @Result(property = "problemDetail", column = "problem_detail"),
             @Result(property = "createdAt", column = "created_at"),
             @Result(property = "score", column = "score"),
-            @Result(property = "creatorId", column = "creator_id"),
+            @Result(property = "creatorId", column = "user_id"),
             @Result(property = "starterCode", column = "starter_code"),
             @Result(property = "language", column = "language")
     })
@@ -44,7 +44,7 @@ public interface CodeChallengeRepository {
     @Select("""
         INSERT INTO code_challenges
         (title, description, test_case, problem_detail, created_at, score, user_id, starter_code, language)
-        VALUES 
+        VALUES
         (
             #{codeChallenge.title},
             #{codeChallenge.description},

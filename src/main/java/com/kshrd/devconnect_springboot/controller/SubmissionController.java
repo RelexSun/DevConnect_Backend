@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,11 +23,11 @@ import java.util.UUID;
 public class SubmissionController extends BaseController {
     private final SubmissionService submissionService;
     @PostMapping("/submitCode/{codeId}")
-    public ResponseEntity<ApiResponse<String>> submitStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<String>>> submitStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
         return response("Code submitted successfully", submissionService.submitCode(studentCode , codeId));
     }
     @PostMapping("/testCode/{codeId}")
-    public ResponseEntity<ApiResponse<String>> testStudentCode(@RequestBody @Valid String studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<String>>> testStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
         return response("Code tested successfully",submissionService.testStudentCode(studentCode , codeId));
     }
 

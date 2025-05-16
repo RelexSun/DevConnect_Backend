@@ -109,13 +109,18 @@ public class CodeGenerator {
     private static String generateC(String header, String body, String fnName, List<TestCase> tests) {
         StringBuilder sb = new StringBuilder();
         sb.append("#include <stdio.h>\n");
+        sb.append("#include <stdlib.h>\n");
+        sb.append("#include <string.h>\n");
+        sb.append("#include <math.h>\n");
+        sb.append("#include <stdbool.h>\n");
+        sb.append("\n");
         sb.append(header).append(" {\n    ").append(body).append("\n}\n");
         sb.append("int main() {\n");
         for (TestCase t : tests) {
             String argsList = t.getInput().stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(", "));
-            sb.append("    printf(\"%d\\n\", ").append(fnName).append("(").append(argsList).append("));\n");
+            sb.append("    printf(\"%s\\n\", ").append(fnName).append("(").append(argsList).append("));\n");
         }
         sb.append("    return 0;\n}");
         return sb.toString();
@@ -194,9 +199,7 @@ public class CodeGenerator {
 
     private static String generatePHP(String header, String body, String fnName, List<TestCase> tests) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("<?php\n\n");
-
         // Extract function parameters from header
         String params = "";
         if (header != null && !header.isEmpty()) {
