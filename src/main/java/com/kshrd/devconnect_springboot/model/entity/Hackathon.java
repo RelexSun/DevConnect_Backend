@@ -1,5 +1,7 @@
 package com.kshrd.devconnect_springboot.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kshrd.devconnect_springboot.model.dto.response.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +14,18 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Hackathon {
     private UUID hackathonId;
-    private String hackathonTitle;
-    private String hackathonDescription;
+    private String title;
+    private String description;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime endDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime createdDate = LocalDateTime.now();
     private Boolean isAvailable;
-    private UUID creatorId; //Recruiter Id
+    private Integer fullScores;
+    private UserResponse creatorId;
 }

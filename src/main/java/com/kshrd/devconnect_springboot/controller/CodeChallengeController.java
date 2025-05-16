@@ -15,65 +15,38 @@ import org.springframework.http.HttpStatus;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/codeChallenge")
+@RequestMapping("/api/v1/code-challenge")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class CodeChallengeController extends BaseController {
 
     private final CodeChallengeService codeChallengeService;
     @GetMapping
-    public ResponseEntity<ApiResponse>  getAllCodeChallenge() {
-        List<CodeChallenge> entity = codeChallengeService.getAllCodeChallenge();
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("CodeChallenge retrieved successfully")
-                .status(HttpStatus.OK)
-                .payload(entity)
-                .build());
+    public ResponseEntity<ApiResponse<List<CodeChallenge>>>  getAllCodeChallenge() {
+        return response("CodeChallenge retrieved successfully", codeChallengeService.getAllCodeChallenge());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getCodeChallengeById(@PathVariable UUID id) {
-        CodeChallenge entity = codeChallengeService.getCodeChallengeById(id);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("CodeChallenge retrieved successfully")
-                .status(HttpStatus.OK)
-                .payload(entity)
-                .build());
+    @GetMapping("/{codeId}")
+    public ResponseEntity<ApiResponse<CodeChallenge>> getCodeChallengeById(@PathVariable UUID codeId) {
+        return response("CodeChallenge retrieved successfully", codeChallengeService.getCodeChallengeById(codeId));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createCodeChallenge(@RequestBody @Valid CodeChallengeRequest entity) {
-        CodeChallenge service = codeChallengeService.createCodeChallenge(entity);
-       return response(ApiResponse.builder()
-                .success(true)
-                .message("CodeChallenge created successfully")
-                .status(HttpStatus.CREATED)
-                .payload(service)
-                .build());
+    public ResponseEntity<ApiResponse<CodeChallenge>> createCodeChallenge(@RequestBody @Valid CodeChallengeRequest entity) {
+        return response("CodeChallenge created successfully",
+                        HttpStatus.CREATED,
+                        codeChallengeService.createCodeChallenge(entity));
+
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateCodeChallenge(@PathVariable UUID id, @RequestBody @Valid CodeChallengeRequest entity) {
-        CodeChallenge updatedEntity = codeChallengeService.updateCodeChallenge(id,entity);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("CodeChallenge updated successfully")
-                .status(HttpStatus.OK)
-                .payload(updatedEntity)
-                .build());
+    @PutMapping("/{codeId}")
+    public ResponseEntity<ApiResponse<CodeChallenge>> updateCodeChallenge(@PathVariable UUID codeId, @RequestBody @Valid CodeChallengeRequest entity) {
+        return response("CodeChallenge updated successfully", codeChallengeService.updateCodeChallenge(codeId,entity));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteCodeChallenge(@PathVariable UUID id) {
-        CodeChallenge entity = codeChallengeService.deleteCodeChallenge(id);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("CodeChallenge deleted successfully")
-                .status(HttpStatus.OK)
-                .payload(entity)
-                .build());
+    @DeleteMapping("/{codeId}")
+    public ResponseEntity<ApiResponse<CodeChallenge>> deleteCodeChallenge(@PathVariable UUID codeId) {
+        return response("CodeChallenge updated successfully", codeChallengeService.deleteCodeChallenge(codeId));
     }
 
 }

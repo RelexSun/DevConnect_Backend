@@ -13,5 +13,4 @@ import java.util.UUID;
 public class JoinJobRequest {
     private String title;
     private String description;
-    private UUID jobId;
 }

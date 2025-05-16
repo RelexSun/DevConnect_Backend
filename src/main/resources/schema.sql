@@ -46,10 +46,11 @@ CREATE TABLE IF NOT EXISTS recruiter_profiles (
     recruiter_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     company_name VARCHAR(100),
     gender VARCHAR(10),
+    phone_number VARCHAR(14),
     industry VARCHAR(100),
     company_location VARCHAR(200),
     bio VARCHAR(100),
-    establish_date TIMESTAMP,
+    establish_date DATE,
     cover_picture VARCHAR(255),
     user_id UUID NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -114,6 +115,7 @@ CREATE TABLE IF NOT EXISTS topics (
     user_id UUID NOT NULL,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
+
 
 -- comments
 CREATE TABLE IF NOT EXISTS comments (
@@ -290,3 +292,12 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     PRIMARY KEY (target_id, bookmark_by, target_type),
     CHECK (target_type IN ('project', 'hackathon', 'recruiter', 'developer', 'job'))
     );
+
+-- topic_skill
+CREATE TABLE IF NOT EXISTS topic_skill (
+   topic_id uuid NOT NULL,
+   skill_id uuid NOT NULL,
+   FOREIGN KEY (topic_id) REFERENCES topics(topic_id),
+   FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
+);
+

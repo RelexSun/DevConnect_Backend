@@ -2,21 +2,24 @@ package com.kshrd.devconnect_springboot.service.implementation;
 
 
 import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.TopicResponse;
 import com.kshrd.devconnect_springboot.model.entity.Topic;
+import com.kshrd.devconnect_springboot.model.mapper.TopicMapper;
+import com.kshrd.devconnect_springboot.respository.SkillRepository;
 import com.kshrd.devconnect_springboot.respository.TopicRepository;
 import com.kshrd.devconnect_springboot.service.TopicService;
 import com.kshrd.devconnect_springboot.utils.CurrentUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class TopicServiceImplementation implements TopicService {
     private final TopicRepository repository;
-    public TopicServiceImplementation(TopicRepository repository) {
-        this.repository = repository;
-    }
+    private final SkillRepository skillRepository;
+    private final TopicMapper topicMapper;
 
     @Override
     public Topic getTopicsById(UUID id) {
@@ -24,13 +27,18 @@ public class TopicServiceImplementation implements TopicService {
     }
 
     @Override
-    public List<Topic> getAllTopics() {
-        return repository.getAllTopics();
+    public List<TopicResponse> getAllTopics() {
+        return topicMapper.toShowInCard(repository.getAllTopics());
     }
 
     @Override
     public Topic createTopics(TopicRequest entity) {
-        return repository.insertTopics(entity , CurrentUser.appUserId);
+        Topic inserted = repository.insertTopics(entity, CurrentUser.appUserId);
+        List<UUID> skillIds = entity.getSkills();
+        for (UUID skillId : skillIds) {
+            repository.insertSkillToTopic(inserted.getTopicId(), skillId);
+        }
+        return inserted;
     }
 
     @Override

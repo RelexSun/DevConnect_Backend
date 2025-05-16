@@ -2,6 +2,7 @@ package com.kshrd.devconnect_springboot.controller;
 
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
+import com.kshrd.devconnect_springboot.model.entity.Position;
 import com.kshrd.devconnect_springboot.service.PositionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,22 +23,12 @@ import java.util.UUID;
 public class PositionController extends BaseController {
     private final PositionService positionService;
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllPositions() {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Get all positions successfully!!!")
-                .status(HttpStatus.OK)
-                .payload(positionService.getAllPositions())
-                .build());
+    public ResponseEntity<ApiResponse<List<Position>>> getAllPositions() {
+        return response("Get all positions successfully!!!", positionService.getAllPositions());
     }
 
     @GetMapping("/{position-id}")
-    public ResponseEntity<ApiResponse> getPositionById(@PathVariable("position-id") UUID positionId) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Get all positions successfully!!!")
-                .status(HttpStatus.OK)
-                .payload(positionService.getPositionById(positionId))
-                .build());
+    public ResponseEntity<ApiResponse<Position>> getPositionById(@PathVariable("position-id") UUID positionId) {
+        return response("Get all positions successfully!!!",positionService.getPositionById(positionId));
     }
 }

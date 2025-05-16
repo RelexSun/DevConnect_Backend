@@ -2,6 +2,7 @@ package com.kshrd.devconnect_springboot.controller;
 
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
+import com.kshrd.devconnect_springboot.model.entity.Skill;
 import com.kshrd.devconnect_springboot.service.SkillService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,22 +24,12 @@ public class SkillController extends BaseController {
     private final SkillService skillService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllSkill() {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Get all skills successfully!!!")
-                .status(HttpStatus.OK)
-                .payload(skillService.getAllSkill())
-                .build());
+    public ResponseEntity<ApiResponse<List<Skill>>> getAllSkill() {
+        return response("Get all skills successfully!!!", skillService.getAllSkill());
     }
 
     @GetMapping("{skill-id}")
-    public ResponseEntity<ApiResponse> getAllSkill(@PathVariable("skill-id") UUID skillId) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Get skill by id successfully!!!")
-                .status(HttpStatus.OK)
-                .payload(skillService.getSkillById(skillId))
-                .build());
+    public ResponseEntity<ApiResponse<Skill>> getAllSkill(@PathVariable("skill-id") UUID skillId) {
+        return response("Get skill by id successfully!!!", skillService.getSkillById(skillId));
     }
 }

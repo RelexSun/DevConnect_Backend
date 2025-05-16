@@ -17,31 +17,18 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/submission")
+@RequestMapping("/api/v1/submission")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class SubmissionController extends BaseController {
     private final SubmissionService submissionService;
     @PostMapping("/submitCode/{codeId}")
-    public ResponseEntity<ApiResponse> submitStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
-        List<String> finalCode = submissionService.submitCode(studentCode , codeId);
-
-        return ResponseEntity.ok(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Code submitted successfully")
-                .payload(finalCode)
-                .build());
+    public ResponseEntity<ApiResponse<List<String>>> submitStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
+        return response("Code submitted successfully", submissionService.submitCode(studentCode , codeId));
     }
     @PostMapping("/testCode/{codeId}")
-    public ResponseEntity<ApiResponse> testStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
-        List<String> finalCode = submissionService.testStudentCode(studentCode , codeId);
-        return ResponseEntity.ok(ApiResponse.builder()
-                .success(true)
-                .status(HttpStatus.OK)
-                .message("Code tested successfully")
-                .payload(finalCode)
-                .build());
+    public ResponseEntity<ApiResponse<List<String>>> testStudentCode(@RequestBody @Valid SubmitCodeRequest studentCode , @PathVariable UUID codeId) throws JsonProcessingException {
+        return response("Code tested successfully",submissionService.testStudentCode(studentCode , codeId));
     }
 
 }

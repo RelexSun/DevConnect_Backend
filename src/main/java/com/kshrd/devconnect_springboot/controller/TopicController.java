@@ -4,6 +4,8 @@ package com.kshrd.devconnect_springboot.controller;
 import com.kshrd.devconnect_springboot.base.ApiResponse;
 import com.kshrd.devconnect_springboot.base.BaseController;
 import com.kshrd.devconnect_springboot.model.dto.request.TopicRequest;
+import com.kshrd.devconnect_springboot.model.dto.response.TopicResponse;
+import com.kshrd.devconnect_springboot.model.entity.Topic;
 import com.kshrd.devconnect_springboot.service.TopicService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping("/api/topics")
+@RequestMapping("/api/v1/topics")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class TopicController extends BaseController {
@@ -24,52 +26,29 @@ public class TopicController extends BaseController {
     private final TopicService topicsService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse>  getAllTopics() {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Topics retrieved successfully")
-                .status(HttpStatus.OK)
-                .payload(topicsService.getAllTopics())
-                .build());
+    public ResponseEntity<ApiResponse<List<TopicResponse>>> getAllTopics() {
+        return response("Topics retrieved successfully",topicsService.getAllTopics());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getTopicsById(@PathVariable UUID id) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Topics retrieved by id successfully")
-                .status(HttpStatus.OK)
-                .payload(topicsService.getTopicsById(id))
-                .build());
+    @GetMapping("/{TopicId}")
+    public ResponseEntity<ApiResponse<Topic>> getTopicsById(@PathVariable UUID TopicId) {
+        return response("Topics retrieved by id successfully", topicsService.getTopicsById(TopicId));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createTopics(@RequestBody TopicRequest entity) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Topics have been created successfully")
-                .status(HttpStatus.CREATED)
-                .payload(topicsService.createTopics(entity))
-                .build());
+    public ResponseEntity<ApiResponse<Topic>> createTopics(@RequestBody TopicRequest entity) {
+        return response("Topics have been created successfully", HttpStatus.CREATED, topicsService.createTopics(entity));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateTopics(@PathVariable UUID id, @RequestBody TopicRequest entity) {
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Topics have been updated successfully")
-                .status(HttpStatus.OK)
-                .payload(topicsService.updateTopics(id,entity))
-                .build());
+    @PutMapping("/{TopicId}")
+    public ResponseEntity<ApiResponse<Topic>> updateTopics(@PathVariable UUID TopicId, @RequestBody TopicRequest entity) {
+        return response("Topics have been updated successfully", topicsService.updateTopics(TopicId,entity));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteTopics(@PathVariable UUID id) {
-        topicsService.deleteTopics(id);
-        return response(ApiResponse.builder()
-                .success(true)
-                .message("Topics have been deleted successfully")
-                .status(HttpStatus.OK)
-                .build());
+    @DeleteMapping("/{TopicId}")
+    public ResponseEntity<ApiResponse<Object>> deleteTopics(@PathVariable UUID TopicId) {
+        topicsService.deleteTopics(TopicId);
+        return response("Topics have been deleted successfully");
+
     }
 }
