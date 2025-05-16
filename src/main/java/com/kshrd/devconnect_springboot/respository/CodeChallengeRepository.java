@@ -13,7 +13,7 @@ public interface CodeChallengeRepository {
     // GET CodeChallenge BY ID
     @Select("""
         SELECT *
-        FROM code_challenges
+        FROM code_challenge
         WHERE challenge_id = #{id}
     """)
     @Results(id = "BaseResultMap", value = {
